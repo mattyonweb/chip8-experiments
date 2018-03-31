@@ -53,12 +53,12 @@ int execute(Chip8 chip8) {
     unsigned char   updatePc = 1;
     unsigned short  instruction = (chip8->memory[chip8->pc]) << 8 |
                                    chip8->memory[chip8->pc+1];
+    unsigned char   b1 = (chip8->memory[chip8->pc] & 0xF0) >> 4,
+                    b2 = chip8->memory[chip8->pc] & 0xF,
+                    b3 = (chip8->memory[chip8->pc+1] & 0xF0) >> 4,
+                    b4 = chip8->memory[chip8->pc+1] & 0xF;
                     
-    printf("0x%03X\t%01X%01X%01X%01X\t", chip8->pc,
-                                         (chip8->memory[chip8->pc] & 0xF0) >> 4,
-                                         chip8->memory[chip8->pc] & 0xF,
-                                         (chip8->memory[chip8->pc+1] & 0xF0) >> 4,
-                                         chip8->memory[chip8->pc+1] & 0xF);
+    printf("0x%03X\t%01X%01X%01X%01X\t", chip8->pc,b1,b2,b3,b4);
 
     switch ((instruction & 0xF000) >> 12) {
         case 0:
