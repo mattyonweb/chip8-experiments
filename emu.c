@@ -37,7 +37,7 @@ int main() {
         chip8->registers[i] = 0;
     
     memdump(chip8);
-    for (int x=0; x<200; x++)
+    for (int x=0; x<4096; x++)
        execute(chip8);
 }
 
