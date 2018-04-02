@@ -1,24 +1,43 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <termios.h>
+#include <string.h>
 
 typedef struct machine {
     unsigned char memory[4096];
     unsigned char registers[16];
+    unsigned char monitor[64 * 32];
+    
     unsigned short I;
     unsigned short pc;
-    unsigned char monitor[64 * 32];
+    unsigned char  dt;
+    unsigned char  st;
 
     unsigned short stack[16];
-    unsigned char sp;
+    unsigned char sp;    
 } * Chip8;
 
 int execute (Chip8 c);
 void memdump(Chip8 c);
+unsigned char keyTranslate(unsigned char c);
+
+
+void change(void) {
+    struct termios org_opts, new_opts;
+
+        //-----  store old settings -----------
+    tcgetattr(STDIN_FILENO, &org_opts);
+        //---- set new terminal parms --------
+    memcpy(&new_opts, &org_opts, sizeof(new_opts));
+    new_opts.c_lflag &= ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ECHOPRT | ECHOKE | ICRNL);
+    tcsetattr(STDIN_FILENO, TCSANOW, &new_opts);
+}
 
 int main() {
     Chip8 chip8 = malloc(sizeof(struct machine));
     
-    FILE * source = fopen("TETRIS", "rb");
+    FILE * source = fopen("MASTERMIND", "rb");
 
     fseek(source, 0L, SEEK_END);
     int size = ftell(source);
@@ -26,8 +45,6 @@ int main() {
 
     for (int i=0; i<size; i += 2) {
         unsigned char b1 = fgetc(source), b2 = fgetc(source);
-        //unsigned short instruction = b1 << 8 | b2;
-        //printf("%04X\n", instruction);
         chip8->memory[512 + i]     = b1;
         chip8->memory[512 + i + 1] = b2;
     }
@@ -37,8 +54,13 @@ int main() {
         chip8->registers[i] = 0;
     
     memdump(chip8);
-    for (int x=0; x<4096; x++)
-       execute(chip8);
+
+    change();
+    
+    while (1) {
+        execute(chip8);
+        usleep(16000);
+    }
 }
 
 void memdump(Chip8 chip8) {
@@ -122,6 +144,16 @@ int execute(Chip8 chip8) {
             } 
             else
                 printf("FALSE\t%02X!=%02X\n", chip8->registers[b2], chip8->registers[b3]);
+            break;
+            
+        case 9:
+            printf("[SKIP_RegNE]\tSKIP: ");
+            if (chip8->registers[b2] != chip8->registers[b3]) {
+                chip8->pc += 2; 
+                printf("TRUE\t%02X!=%02X\n", chip8->registers[b2], chip8->registers[b3]);
+            } 
+            else
+                printf("FALSE\t%02X==%02X\n", chip8->registers[b2], chip8->registers[b3]);
             break;
 
         case 6:
@@ -215,9 +247,62 @@ int execute(Chip8 chip8) {
             chip8->registers[b2] = (rand()%255) & (lastTwo);
             printf("V%X = rand()\n", b2);
             break;
-            
+                    
+        case 0xF:
+            switch( (b3<<4) | b4) {
+                case 0x07:
+                    printf("[Vx=DT]\n");
+                    chip8->registers[b2] = chip8->dt;
+                    break;
+
+                case 0x15:
+                    printf("[DREG]\n");
+                    chip8->dt = chip8->registers[b2];
+                    break;
+
+                case 0x18:
+                    printf("[SREG]\n");
+                    chip8->st = chip8->registers[b2];
+                    break;
+
+                case 0x1E:
+                    printf("[IADD]\n");
+                    chip8->I += chip8->registers[b2];
+                    break;
+
+                case 0x55:
+                    printf("[MULTSTORE]\n");
+                    for (int i=0; i<b2+1; i++)
+                        chip8->memory[chip8->I++] = chip8->registers[i]; //I si aggiorna???
+                    break;
+
+                case 0x65:
+                    printf("[MULTLOAD]\n");
+                    for (int i=0; i<b2+1; i++)
+                        chip8->registers[i] = chip8->memory[chip8->I++];
+                    break;
+
+                case 0x0A:
+                    printf("[GETKEY]\n");
+                    chip8->registers[b2] = keyTranslate(getchar());
+                    break;
+
+                case 0x33:
+                    printf("[BCD]\n");
+                    chip8->memory[chip8->I+0] = 100 * ((int)chip8->registers[b2] / 100);
+                    chip8->memory[chip8->I+1] = 10  * (((int)chip8->registers[b2] - chip8->memory[chip8->I+0]) / 10);
+                    chip8->memory[chip8->I+2] = chip8->registers[b2] - chip8->memory[chip8->I+0] - chip8->memory[chip8->I+1];
+                    chip8->memory[chip8->I+1] = (unsigned char)(chip8->memory[chip8->I+1] / 10);
+                    chip8->memory[chip8->I+0] = (unsigned char)(chip8->memory[chip8->I+0] / 100);
+                    break;
+                    
+                default:
+                    break;
+            }
+            break;
+
         default:
-            printf("[NOP]\n");
+            printf("[UNKNOWN]\n");
             break;
     }
     
@@ -227,4 +312,14 @@ int execute(Chip8 chip8) {
         printf("\t\t(non updato)\n");
     return 0;
 
+}
+
+unsigned char keyTranslate(unsigned char c) {
+    if (c >= '0' && c <= '9')
+        return c - '0';
+    if (c >= 'a' && c <= 'f')
+        return (c - 'a') + 10;
+    if (c >= 'A' && c <= 'F')
+        return (c - 'A') + 10;
+    return 255;
 }
