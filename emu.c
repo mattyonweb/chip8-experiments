@@ -3,6 +3,10 @@
 #include <unistd.h>
 #include <termios.h>
 #include <string.h>
+#include <ncurses.h>
+
+#define CLOCK 16000
+#define INPUTTIME 160
 
 typedef struct machine {
     unsigned char memory[4096];
@@ -19,19 +23,18 @@ typedef struct machine {
 } * Chip8;
 
 int execute (Chip8 c);
+int executeNoOutput (Chip8 c);
 void memdump(Chip8 c);
 unsigned char keyTranslate(unsigned char c);
 
-
-void change(void) {
-    struct termios org_opts, new_opts;
-
-        //-----  store old settings -----------
-    tcgetattr(STDIN_FILENO, &org_opts);
-        //---- set new terminal parms --------
-    memcpy(&new_opts, &org_opts, sizeof(new_opts));
-    new_opts.c_lflag &= ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ECHOPRT | ECHOKE | ICRNL);
-    tcsetattr(STDIN_FILENO, TCSANOW, &new_opts);
+WINDOW * createWindow() {
+    initscr();
+    WINDOW * w = newwin(24, 80, 0, 0);
+    timeout(INPUTTIME);
+    noecho();
+    nodelay(stdscr, TRUE);
+    cbreak();
+    return w;
 }
 
 int main() {
@@ -55,11 +58,13 @@ int main() {
     
     memdump(chip8);
 
-    change();
+    createWindow();
     
     while (1) {
+        //executeNoOutput(chip8);
         execute(chip8);
-        usleep(16000);
+        if(chip8->dt > 0) chip8->dt--;
+        usleep(CLOCK);
     }
 }
 
@@ -71,6 +76,215 @@ void memdump(Chip8 chip8) {
     fclose(fout);
 }
 
+int executeNoOutput(Chip8 chip8) {
+    unsigned char   updatePc = 1;
+    unsigned short  instruction = (chip8->memory[chip8->pc]) << 8 |
+                                   chip8->memory[chip8->pc+1];
+    unsigned char   b1 = (chip8->memory[chip8->pc] & 0xF0) >> 4,
+                    b2 = chip8->memory[chip8->pc] & 0xF,
+                    b3 = (chip8->memory[chip8->pc+1] & 0xF0) >> 4,
+                    b4 = chip8->memory[chip8->pc+1] & 0xF;
+    unsigned char   lastTwo   = (b3 << 4) | b4;
+    unsigned char   ch;
+
+    switch ((instruction & 0xF000) >> 12) {
+        case 0:
+            if (instruction == 0x00E0) {
+                for (int i=0; i<64*32; i++)
+                    chip8->monitor[i]=0;
+            }
+            
+            else if (instruction == 0x00EE) { //00EE
+                chip8->pc = chip8->stack[--(chip8->sp)];
+                updatePc = 0;
+            }
+
+            break;
+            
+        case 1:
+            chip8->pc = instruction & 0x0FFF;
+            updatePc = 0;
+            break;
+
+        case 2:
+            chip8->stack[chip8->sp] = chip8->pc + 2;
+            chip8->sp++;
+            chip8->pc = instruction & 0x0FFF;
+            updatePc = 0;
+            break;
+
+        case 3:
+            if (chip8->registers[b2] == lastTwo) {
+                chip8->pc += 2; 
+            }
+            break;
+            
+        case 4:
+            if (chip8->registers[b2] != (lastTwo)) {
+                chip8->pc += 2; 
+            }
+            break;
+
+        case 5:
+            if (chip8->registers[b2] == chip8->registers[b3]) {
+                chip8->pc += 2; 
+            }
+            break;
+            
+        case 9:
+            if (chip8->registers[b2] != chip8->registers[b3]) {
+                chip8->pc += 2; 
+            } 
+            break;
+
+        case 6:
+            chip8->registers[b2] = lastTwo;
+            break;
+            
+        case 7:
+            chip8->registers[b2] += lastTwo;
+            break;
+
+        case 8:
+            switch (b4) {
+                case 0:
+                    chip8->registers[b2] = chip8->registers[b3];
+                    break;
+
+                case 1:
+                    chip8->registers[b2] = chip8->registers[b2] | chip8->registers[b3];
+                    break;
+
+                case 2:
+                    chip8->registers[b2] = chip8->registers[b2] & chip8->registers[b3];
+                    break;
+
+                case 3:
+                    chip8->registers[b2] = chip8->registers[b2] ^ chip8->registers[b3];
+                    break;
+
+                case 4:
+                    if (chip8->registers[b2] + chip8->registers[b3] > 255)
+                        chip8->registers[0xF] = 1;
+                    chip8->registers[b2] += chip8->registers[b3];
+                    break;
+                    
+                case 5:
+                    if (chip8->registers[b2] - chip8->registers[b3] < 0)
+                        chip8->registers[0xF] = 1;
+                    chip8->registers[b2] -= chip8->registers[b3];
+                    break;
+
+                case 6:
+                    chip8->registers[0xF] = chip8->registers[b3]&0b00000001; //GIUSTO?!
+                    chip8->registers[b3] = chip8->registers[b3] >> 1;
+                    chip8->registers[b2] = chip8->registers[b3];
+                    break;
+
+                case 7:
+                    if (chip8->registers[b3] - chip8->registers[b2] < 0)
+                        chip8->registers[0xF] = 1;
+                    chip8->registers[b2] = chip8->registers[b3] - chip8->registers[b2];
+                    break;
+
+                case 0xE:
+                    chip8->registers[0xF] = chip8->registers[b3]&0b10000000; //GIUSTO?!
+                    chip8->registers[b3] = chip8->registers[b3] << 1;
+                    chip8->registers[b2] = chip8->registers[b3];
+                    break;
+                                        
+                default:
+                    break;
+            }
+            break;
+
+        case 0xA:
+            chip8->I = instruction & 0x0fff;
+            break;
+
+        case 0xB:
+            chip8->pc = instruction & 0x0fff;
+            updatePc = 0;
+            break;
+        
+        case 0xC:
+            chip8->registers[b2] = (rand()%255) & (lastTwo);
+            break;
+        
+        case 0xE:
+            if (b3 == 9 && b4 == 0xE) {            
+                if ((ch = getch()) == ERR)
+                    break;
+                else {
+                    if (ch == chip8->registers[b2])
+                        chip8->pc += 2;
+                }
+            }
+            else if (b3 == 0xA && b4 == 1) {
+                if ((ch = getch()) == ERR)
+                    break;
+                else {
+                    if (ch != chip8->registers[b2])
+                        chip8->pc += 2;
+                }
+            }
+            break;
+                
+        case 0xF:
+            switch( (b3<<4) | b4) {
+                case 0x07:
+                    chip8->registers[b2] = chip8->dt;
+                    break;
+
+                case 0x15:
+                    chip8->dt = chip8->registers[b2];
+                    break;
+
+                case 0x18:
+                    chip8->st = chip8->registers[b2];
+                    break;
+
+                case 0x1E:
+                    chip8->I += chip8->registers[b2];
+                    break;
+
+                case 0x55:
+                    for (int i=0; i<b2+1; i++)
+                        chip8->memory[chip8->I++] = chip8->registers[i]; //I si aggiorna???
+                    break;
+
+                case 0x65:
+                    for (int i=0; i<b2+1; i++)
+                        chip8->registers[i] = chip8->memory[chip8->I++];
+                    break;
+
+                case 0x0A:
+                    chip8->registers[b2] = keyTranslate(getchar());
+                    break;
+
+                case 0x33:
+                    chip8->memory[chip8->I+0] = 100 * ((int)chip8->registers[b2] / 100);
+                    chip8->memory[chip8->I+1] = 10  * (((int)chip8->registers[b2] - chip8->memory[chip8->I+0]) / 10);
+                    chip8->memory[chip8->I+2] = chip8->registers[b2] - chip8->memory[chip8->I+0] - chip8->memory[chip8->I+1];
+                    chip8->memory[chip8->I+1] = (unsigned char)(chip8->memory[chip8->I+1] / 10);
+                    chip8->memory[chip8->I+0] = (unsigned char)(chip8->memory[chip8->I+0] / 100);
+                    break;
+                    
+                default:
+                    break;
+            }
+            break;
+
+        default:
+            break;
+    }
+    
+    if (updatePc)
+        chip8->pc += 2;
+    return 0;
+
+}
+
 int execute(Chip8 chip8) {
     unsigned char   updatePc = 1;
     unsigned short  instruction = (chip8->memory[chip8->pc]) << 8 |
@@ -80,10 +294,10 @@ int execute(Chip8 chip8) {
                     b3 = (chip8->memory[chip8->pc+1] & 0xF0) >> 4,
                     b4 = chip8->memory[chip8->pc+1] & 0xF;
     unsigned char   lastTwo   = (b3 << 4) | b4;
-                    
-    printf("0x%03X\t%01X%01X%01X%01X\t", chip8->pc,b1,b2,b3,b4);
 
-    switch ((instruction & 0xF000) >> 12) {
+    printf("%04X\t%X%X%X%X\t", chip8->pc, b1,b2,b3,b4);
+    
+    switch (b1) {
         case 0:
             if (instruction == 0x00E0) {
                 printf("[CLEAR_DISPLAY]\n");
@@ -243,11 +457,10 @@ int execute(Chip8 chip8) {
             break;
         
         case 0xC:
-            printf("[RAND]\t");
             chip8->registers[b2] = (rand()%255) & (lastTwo);
-            printf("V%X = rand()\n", b2);
+            printf("[RAND]\tV%X = rand()\n", b2);
             break;
-                    
+                
         case 0xF:
             switch( (b3<<4) | b4) {
                 case 0x07:
