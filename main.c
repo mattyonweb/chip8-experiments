@@ -1,42 +1,52 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <termios.h>
-#include <string.h>
 #include <ncurses.h>
 #include "emu.h"
 
+void prompt(Chip8 chip8);
 
 int main() {
-    Chip8 chip8 = malloc(sizeof(struct machine));
+    Chip8 chip8 = initChip8("TETRIS");
     
-    FILE * source = fopen("SIERPINSKY", "rb");
-
-    fseek(source, 0L, SEEK_END);
-    int size = ftell(source);
-    rewind(source);
-
-    for (int i=0; i<size; i += 2) {
-        unsigned char b1 = fgetc(source), b2 = fgetc(source);
-        chip8->memory[512 + i]     = b1;
-        chip8->memory[512 + i + 1] = b2;
-    }
-    chip8->pc = 512;
-    chip8->sp = 0;
-    for (int i=0; i<16; i++)
-        chip8->registers[i] = 0;
-    
-    memdump(chip8);
+    if (DEBUG) memdump(chip8);
     if (!DEBUG)
         createWindow();
     
     while (1) {
-    //~ for (int i=0; i<16; i++) {
-        timeout(INPUTTIME);
         execute(chip8, DEBUG);
-        if(chip8->dt > 0) chip8->dt--;
+        if (DEBUG) 
+            prompt(chip8);
+        //~ else
+            //~ drawScreen(chip8);
+        if(chip8->dt > 0)
+            chip8->dt--;
         usleep(CLOCK);
-        drawScreen(chip8);
     }
-    monitordump(chip8);
 }
+
+void prompt(Chip8 chip8) {
+    int end = 0;
+    
+    char* s = calloc(2, sizeof(char));
+    
+    while (!end) {
+        printf(">");
+        scanf("%s", s);
+        
+        switch(s[0]) {
+            case 'v':
+                machinedump(chip8, keyTranslate(s[1]));
+                break;
+            case 'c':
+                end = 1;
+                break;
+            default:
+                break;
+        }
+        
+        printf("\n");
+    }
+    free(s);
+}
+

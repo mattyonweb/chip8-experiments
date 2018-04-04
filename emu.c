@@ -1,12 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <termios.h>
-#include <string.h>
 #include <ncurses.h>
 #include "emu.h"
 
 WINDOW * createWindow() {
+    /* Inizializza ncurses, stabilendo le modalità di input */
     initscr();          //inizializza ncurses; necessario
     WINDOW * w = newwin(32, 64, 0, 0);
     timeout(INPUTTIME); //quanto tempo aspetta per un input prima di dare ERR
@@ -16,7 +15,32 @@ WINDOW * createWindow() {
     return w;
 }
 
+Chip8 initChip8(char* filename) {
+    /* Inizializza una macchina Chip8, settando registri e caricando il
+     * programma in memoria */
+    Chip8 chip8 = malloc(sizeof(struct machine));
+    
+    FILE * source = fopen(filename, "rb");
+
+    fseek(source, 0L, SEEK_END);
+    int size = ftell(source);
+    rewind(source);
+
+    for (int i=0; i<size; i += 2) {
+        unsigned char b1 = fgetc(source), b2 = fgetc(source);
+        chip8->memory[512 + i]     = b1;
+        chip8->memory[512 + i + 1] = b2;
+    }
+    chip8->pc = 512;
+    chip8->sp = 0;
+    for (int i=0; i<16; i++)
+        chip8->registers[i] = 0;
+    
+    return chip8;
+}
+    
 void memdump(Chip8 chip8) {
+    /* Salva su file il dump della memoria */
     FILE* fout = fopen("memdump", "w");
     
     for (int i=0; i<4096; i+=2)
@@ -25,6 +49,7 @@ void memdump(Chip8 chip8) {
 }
 
 void monitordump(Chip8 chip8) {
+    /* Salva su file il dump del monitor */
     FILE * fout = fopen("mondump", "w");
     for (int i=0; i<32*64; i++) {
         fprintf(fout, "%d", chip8->monitor[i]);
@@ -34,8 +59,22 @@ void monitordump(Chip8 chip8) {
     fclose(fout);
 }
 
+void machinedump(Chip8 chip8, unsigned char regNum) {
+    if (regNum == 255) {
+        for (int i=0; i<16; i++)
+            printf("\t\t\t\tV%X = %02X\n", i, chip8->registers[i]);
+        return;
+    }
+    else if (regNum >= 0 && regNum <= 15) {
+        printf("\t\t\t\tV%X = %02X\n", regNum, chip8->registers[regNum]);
+        return;
+    }
+    else return;
+}
+
 int execute(Chip8 chip8, int debug) {
     unsigned char   updatePc = 1;
+    unsigned char   needToDraw = 0;
     unsigned short  instruction = (chip8->memory[chip8->pc]) << 8 |
                                    chip8->memory[chip8->pc+1];
     unsigned char   b1 = (chip8->memory[chip8->pc] & 0xF0) >> 4,
@@ -221,6 +260,7 @@ int execute(Chip8 chip8, int debug) {
         case 0xD:
             if (debug) { printf("[DRAW]\t(%d,%d)\n", chip8->registers[b2], chip8->registers[b3]); }
             draw(chip8, chip8->registers[b2], chip8->registers[b3], b4);
+            needToDraw = 1;
             break;
             
         case 0xE:
@@ -310,11 +350,15 @@ int execute(Chip8 chip8, int debug) {
         chip8->pc += 2;
     else
         if (debug) { printf("\t\t(non updato)\n");}
+    
+    if (needToDraw && !debug)
+        drawScreen(chip8);
     return 0;
 
 }
 
 unsigned char keyTranslate(unsigned char c) {
+    /* Traduce i tasti premuti in esadecimale 0-F */
     if (c >= '0' && c <= '9')
         return c - '0';
     if (c >= 'a' && c <= 'f')

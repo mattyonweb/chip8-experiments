@@ -3,7 +3,7 @@
 
 #define CLOCK       8000
 #define INPUTTIME   8000
-#define DEBUG       1
+#define DEBUG       0
 
 typedef struct machine {
     unsigned char memory[4096];
@@ -20,11 +20,12 @@ typedef struct machine {
 } * Chip8;
 
 WINDOW * createWindow();
+Chip8 initChip8(char* filename);
 int execute (Chip8 c, int debug);
 void memdump(Chip8 c);
 void monitordump(Chip8 c);
 unsigned char keyTranslate(unsigned char c);
 void draw(Chip8 chip8, unsigned char x, unsigned char y, unsigned char n);
 void drawScreen(Chip8 chip8);
-
+void machinedump(Chip8 chip8, unsigned char regNum);
 #endif
