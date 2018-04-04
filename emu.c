@@ -4,74 +4,16 @@
 #include <termios.h>
 #include <string.h>
 #include <ncurses.h>
-
-#define CLOCK       8000
-#define INPUTTIME   8000
-#define DEBUG       1
-
-typedef struct machine {
-    unsigned char memory[4096];
-    unsigned char registers[16];
-    unsigned char monitor[64 * 32];
-    
-    unsigned short I;
-    unsigned short pc;
-    unsigned char  dt;
-    unsigned char  st;
-
-    unsigned short stack[16];
-    unsigned char sp;    
-} * Chip8;
-
-int execute (Chip8 c, int debug);
-void memdump(Chip8 c);
-void monitordump(Chip8 c);
-unsigned char keyTranslate(unsigned char c);
-void draw(Chip8 chip8, unsigned char x, unsigned char y, unsigned char n);
-void drawScreen(Chip8 chip8);
+#include "emu.h"
 
 WINDOW * createWindow() {
-    initscr(); //inizializza ncurses; necessario
+    initscr();          //inizializza ncurses; necessario
     WINDOW * w = newwin(32, 64, 0, 0);
     timeout(INPUTTIME); //quanto tempo aspetta per un input prima di dare ERR
-    noecho();   //non mostra l'input da tastiera
+    noecho();           //non mostra l'input da tastiera
     nodelay(stdscr, TRUE);  //getch() diventa non-blocking dopo INPUTTIME secondi tipo
-    cbreak();   //boh?!
+    cbreak();           //boh?!
     return w;
-}
-
-int main() {
-    Chip8 chip8 = malloc(sizeof(struct machine));
-    
-    FILE * source = fopen("SIERPINSKY", "rb");
-
-    fseek(source, 0L, SEEK_END);
-    int size = ftell(source);
-    rewind(source);
-
-    for (int i=0; i<size; i += 2) {
-        unsigned char b1 = fgetc(source), b2 = fgetc(source);
-        chip8->memory[512 + i]     = b1;
-        chip8->memory[512 + i + 1] = b2;
-    }
-    chip8->pc = 512;
-    chip8->sp = 0;
-    for (int i=0; i<16; i++)
-        chip8->registers[i] = 0;
-    
-    memdump(chip8);
-    if (!DEBUG)
-        createWindow();
-    
-    while (1) {
-    //~ for (int i=0; i<16; i++) {
-        timeout(INPUTTIME);
-        execute(chip8, DEBUG);
-        if(chip8->dt > 0) chip8->dt--;
-        usleep(CLOCK);
-        drawScreen(chip8);
-    }
-    monitordump(chip8);
 }
 
 void memdump(Chip8 chip8) {
