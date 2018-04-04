@@ -5,9 +5,9 @@
 #include <string.h>
 #include <ncurses.h>
 
-#define CLOCK       16000
-#define INPUTTIME   160
-#define DEBUG       0
+#define CLOCK       8000
+#define INPUTTIME   80
+#define DEBUG       1
 
 typedef struct machine {
     unsigned char memory[4096];
@@ -35,7 +35,7 @@ WINDOW * createWindow() {
     WINDOW * w = newwin(32, 64, 0, 0);
     timeout(INPUTTIME); //quanto tempo aspetta per un input prima di dare ERR
     noecho();   //non mostra l'input da tastiera
-    nodelay(stdscr, TRUE);  //non mi ricordo?
+    nodelay(stdscr, TRUE);  //getch() diventa non-blocking dopo INPUTTIME secondi tipo
     cbreak();   //boh?!
     return w;
 }
@@ -67,8 +67,8 @@ int main() {
     //~ for (int i=0; i<16; i++) {
         execute(chip8, DEBUG);
         if(chip8->dt > 0) chip8->dt--;
-        drawScreen(chip8);
         usleep(CLOCK);
+        drawScreen(chip8);
     }
     monitordump(chip8);
 }
@@ -285,7 +285,7 @@ int execute(Chip8 chip8, int debug) {
                 if ((ch = getch()) == ERR)
                     break;
                 else {
-                    if (ch == chip8->registers[b2])
+                    if (keyTranslate(ch) == chip8->registers[b2])
                         chip8->pc += 2;
                 }
             }
@@ -294,7 +294,7 @@ int execute(Chip8 chip8, int debug) {
                 if ((ch = getch()) == ERR)
                     break;
                 else {
-                    if (ch != chip8->registers[b2])
+                    if (keyTranslate(ch) != chip8->registers[b2])
                         chip8->pc += 2;
                 }
             }
