@@ -8,13 +8,16 @@ void prompt(Chip8 chip8);
 
 int main() {
     Chip8 chip8 = initChip8("BRIX");
-    
+
+    disassemble(chip8);
+    //~ exit(0);
+
     if (DEBUG) memdump(chip8);
     if (!DEBUG)
         createWindow();
     
     while (1) {
-        execute(chip8, DEBUG);
+        execute(chip8, DEBUG, NULL);
         if (DEBUG) 
             prompt(chip8);
         if(chip8->dt > 0)

@@ -1,8 +1,8 @@
 #ifndef EMU_H
 #define EMU_H
 
-#define CLOCK       8000
-#define INPUTTIME   120
+#define CLOCK       5000
+#define INPUTTIME   100
 #define DEBUG       0
 
 typedef struct machine {
@@ -21,9 +21,10 @@ typedef struct machine {
 
 WINDOW * createWindow();
 Chip8 initChip8(char* filename);
-int execute (Chip8 c, int debug);
+int execute (Chip8 c, int debug, FILE* asmout);
 void memdump(Chip8 c);
 void monitordump(Chip8 c);
+void disassemble(Chip8 chip8);
 unsigned char keyTranslate(unsigned char c);
 void draw(Chip8 chip8, unsigned char x, unsigned char y, unsigned char n);
 void drawScreen(Chip8 chip8);
