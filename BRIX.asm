@@ -1,18 +1,18 @@
 0200	li		VE, 05
 0202	li		V5, 00
-0204	li		VB, 06
-0206	li		VA, 00
-0208	li		I, 30c
-020a	draw	VA, VB, 1
-020c	add		VA, VA, 04
-020e	skip_eq	VA, 40
-0210	j		208
-0212	add		VB, VB, 02
-0214	skip_eq	VB, 12
-0216	j		206
-0218	li		VC, 20
-021a	li		VD, 1f
-021c	li		I, 310
+0204	li		VB, 06      ;spiazzamento sulle y
+0206	li		VA, 00      ;spiazzamento sulle x
+0208	li		I, 30c      ;indirizzo spirito tavoletta da rompere?
+020a	draw	VA, VB, 1   ;disegna tavoletta
+020c	add		VA, VA, 04  ;sposta di 4 sulle x
+020e	skip_eq	VA, 40      ;se non ho ancora disegnato 10 tavolette
+0210	j		208         ;disegnane un'altra
+0212	add		VB, VB, 02  ;altrimenti: spostati in giù sulle y di 2
+0214	skip_eq	VB, 12      ;se non ho ancora disegnato 6 file di tavolette
+0216	j		206         ;disegnane un'altra
+0218	li		VC, 20      ;altrimenti: VC = y della racchetta (32)
+021a	li		VD, 1f      
+021c	li		I, 310      
 021e	draw	VC, VD, 1
 0220	jal		2f6
 0222	li		V0, 00
@@ -27,7 +27,8 @@
 0234	mv		V0, DT
 0236	skip_eq	V0, 00
 0238	j		234
-023a	rand	V6023c	li		V7, 1e
+023a	rand	V6
+023c	li		V7, 1e
 023e	li		V8, 01
 0240	li		V9, ff
 0242	li		I, 30e

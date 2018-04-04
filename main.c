@@ -12,7 +12,8 @@ int main() {
     disassemble(chip8);
     //~ exit(0);
 
-    if (DEBUG) memdump(chip8);
+    if (DEBUG) 
+        memdump(chip8);
     if (!DEBUG)
         createWindow();
     
