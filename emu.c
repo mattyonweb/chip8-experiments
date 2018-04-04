@@ -6,8 +6,8 @@
 #include <ncurses.h>
 
 #define CLOCK       8000
-#define INPUTTIME   80
-#define DEBUG       0
+#define INPUTTIME   8000
+#define DEBUG       1
 
 typedef struct machine {
     unsigned char memory[4096];
@@ -43,7 +43,7 @@ WINDOW * createWindow() {
 int main() {
     Chip8 chip8 = malloc(sizeof(struct machine));
     
-    FILE * source = fopen("TETRIS", "rb");
+    FILE * source = fopen("SIERPINSKY", "rb");
 
     fseek(source, 0L, SEEK_END);
     int size = ftell(source);
@@ -65,6 +65,7 @@ int main() {
     
     while (1) {
     //~ for (int i=0; i<16; i++) {
+        timeout(INPUTTIME);
         execute(chip8, DEBUG);
         if(chip8->dt > 0) chip8->dt--;
         usleep(CLOCK);
@@ -218,11 +219,15 @@ int execute(Chip8 chip8, int debug) {
                     break;
                     
                 case 5:
-                    if (debug) { printf("[SUB_C]\tV%X -= V%X (c)\n", b2, b3);}
-                    if (chip8->registers[b2] - chip8->registers[b3] < 0)
+                    if (debug) { printf("[SUB_C]\tV%X -= V%X\t", b2, b3);}
+                    if (chip8->registers[b2] - chip8->registers[b3] < 0) {
                         chip8->registers[0xF] = 1;
-                    else 
+                        printf("CARRY\n");
+                    }
+                    else { 
                         chip8->registers[0xF] = 0;
+                        printf("NOCARRY\n");
+                    }
                     chip8->registers[b2] -= chip8->registers[b3];
                     break;
 
@@ -279,22 +284,17 @@ int execute(Chip8 chip8, int debug) {
         case 0xE:
             if (b3 == 9 && b4 == 0xE) {   
                 ch = getch();
-                if (debug) { printf("[KEYEQ]\tV%x=%x\t%x\n", b2, chip8->registers[b2], ch); }
-                if (ch == ERR)
-                    break;
-                else {
-                    if (keyTranslate(ch) == chip8->registers[b2])
-                        chip8->pc += 2;
-                }
+                if (debug) {printf("[KEYEQ]\tV%x=%x\t%x\n", b2, chip8->registers[b2], ch);}
+                if (keyTranslate(ch) == chip8->registers[b2])
+                    chip8->pc += 2;
+                break;
             }
             else if (b3 == 0xA && b4 == 1) {
-                if (debug) { printf("[KEYNE]\tV%x=%x\n", b2, chip8->registers[b2]); }
-                if ((ch = getch()) == ERR)
-                    break;
-                else {
-                    if (keyTranslate(ch) != chip8->registers[b2])
-                        chip8->pc += 2;
-                }
+                ch = getch();
+                if (debug){printf("[KEYNE]\tV%x!=%x\t%x\n", b2, chip8->registers[b2], ch);}
+                if (keyTranslate(ch) != chip8->registers[b2])
+                    chip8->pc += 2;
+                break;
             }
             break;
             
@@ -306,7 +306,7 @@ int execute(Chip8 chip8, int debug) {
                     break;
 
                 case 0x15:
-                    if (debug) { printf("[DREG]\n");}
+                    if (debug) { printf("[DTIME]\n");}
                     chip8->dt = chip8->registers[b2];
                     break;
 
@@ -314,7 +314,11 @@ int execute(Chip8 chip8, int debug) {
                     if (debug) { printf("[SREG]\n");}
                     chip8->st = chip8->registers[b2];
                     break;
-
+                
+                case 0x29:
+                    printf("DIOCANE\n");            //TODO
+                    break;
+                     
                 case 0x1E:
                     if (debug) { printf("[IADD]\n");}
                     chip8->I += chip8->registers[b2];
@@ -338,7 +342,7 @@ int execute(Chip8 chip8, int debug) {
 
                 case 0x0A:
                     if (debug) { printf("[GETKEY]\n");}
-                    chip8->registers[b2] = keyTranslate(getchar());
+                    chip8->registers[b2] = keyTranslate(getchar()); //qualcosa non mi torna
                     break;
 
                 case 0x33:
@@ -388,7 +392,7 @@ void draw(Chip8 chip8, unsigned char x, unsigned char y, unsigned char n) {
         
         for (int b=0; b<8; b++) {
             unsigned char newVal = bits >> (7 - b) & 0x01;
-            if (newVal == 1 && chip8->monitor[pos] == 1) {
+            if (chip8->monitor[pos] == 1 && newVal == 1) {
                 chip8->registers[0xF] = 1;
                 hasFlipped = 1;
             }
@@ -396,7 +400,7 @@ void draw(Chip8 chip8, unsigned char x, unsigned char y, unsigned char n) {
             if (DEBUG) printf("%d", newVal);
             pos++;
         }
-        if (DEBUG) printf("\n");
+        if (DEBUG) printf("hasFlipped = %d\n", hasFlipped);
         if (!hasFlipped) chip8->registers[0xF] = 0;
     }
 }
