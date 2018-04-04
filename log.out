@@ -1,157 +1,1294 @@
-0200	A2FC	[SETI]	I = 2fc
-0202	6D00	[LI]	VD = 0x0
-0204	6E00	[LI]	VE = 0x0
-0206	DDE3	[DRAW]	(0,0)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	06!=18
-020C	1206	[GOTO] 206
+0200	1205	[GOTO] 205
 		(non updato)
-0206	DDE3	[DRAW]	(0,6)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	0C!=18
-020C	1206	[GOTO] 206
+0205	6000	[LI]	V0 = 0x0
+0207	8500	[COPY]	V5 <- V0
+0209	6001	[LI]	V0 = 0x1
+020B	8150	[COPY]	V1 <- V5
+020D	A3E6	[SETI]	I = 3e6
+020F	F11E	[IADD]
+0211	F055	[MULTSTORE]
+0213	601F	[LI]	V0 = 0x1f
+0215	8A00	[COPY]	VA <- V0
+0217	6000	[LI]	V0 = 0x0
+0219	8B00	[COPY]	VB <- V0
+021B	A3C2	[SETI]	I = 3c2
+021D	F065	[MULTLOAD]
+021F	A3C2	[SETI]	I = 3c2
+0221	DAB1	[DRAW]	(31,0)
+				10000000
+0223	6001	[LI]	V0 = 0x1
+0225	A3C3	[SETI]	I = 3c3
+0227	F055	[MULTSTORE]
+0229	601F	[LI]	V0 = 0x1f
+022B	A406	[SETI]	I = 406
+022D	F055	[MULTSTORE]
+022F	6001	[LI]	V0 = 0x1
+0231	A3C4	[SETI]	I = 3c4
+0233	F055	[MULTSTORE]
+0235	A3C3	[SETI]	I = 3c3
+0237	F065	[MULTLOAD]
+0239	8500	[COPY]	V5 <- V0
+023B	6001	[LI]	V0 = 0x1
+023D	8100	[COPY]	V1 <- V0
+023F	8050	[COPY]	V0 <- V5
+0241	8014	[ADD_C]	V0 += V1 (c)
+0243	A407	[SETI]	I = 407
+0245	F055	[MULTSTORE]
+0247	A3C4	[SETI]	I = 3c4
+0249	F065	[MULTLOAD]
+024B	8500	[COPY]	V5 <- V0
+024D	6001	[LI]	V0 = 0x1
+024F	8100	[COPY]	V1 <- V0
+0251	8050	[COPY]	V0 <- V5
+0253	8015	[SUB_C]	V0 -= V1 (c)
+0255	A3C5	[SETI]	I = 3c5
+0257	F055	[MULTSTORE]
+0259	A3C4	[SETI]	I = 3c4
+025B	F065	[MULTLOAD]
+025D	8500	[COPY]	V5 <- V0
+025F	A3C5	[SETI]	I = 3c5
+0261	F065	[MULTLOAD]
+0263	A3E6	[SETI]	I = 3e6
+0265	F01E	[IADD]
+0267	F065	[MULTLOAD]
+0269	8600	[COPY]	V6 <- V0
+026B	A3C4	[SETI]	I = 3c4
+026D	F065	[MULTLOAD]
+026F	8700	[COPY]	V7 <- V0
+0271	6001	[LI]	V0 = 0x1
+0273	8100	[COPY]	V1 <- V0
+0275	8070	[COPY]	V0 <- V7
+0277	8014	[ADD_C]	V0 += V1 (c)
+0279	A3E6	[SETI]	I = 3e6
+027B	F01E	[IADD]
+027D	F065	[MULTLOAD]
+027F	8100	[COPY]	V1 <- V0
+0281	8060	[COPY]	V0 <- V6
+0283	8013	[XOR]	V0 ^= V1
+0285	8150	[COPY]	V1 <- V5
+0287	A3C6	[SETI]	I = 3c6
+0289	F11E	[IADD]
+028B	F055	[MULTSTORE]
+028D	A3C5	[SETI]	I = 3c5
+028F	F065	[MULTLOAD]
+0291	8500	[COPY]	V5 <- V0
+0293	A3C5	[SETI]	I = 3c5
+0295	F065	[MULTLOAD]
+0297	A3C6	[SETI]	I = 3c6
+0299	F01E	[IADD]
+029B	F065	[MULTLOAD]
+029D	8150	[COPY]	V1 <- V5
+029F	A3E6	[SETI]	I = 3e6
+02A1	F11E	[IADD]
+02A3	F055	[MULTSTORE]
+02A5	A3C4	[SETI]	I = 3c4
+02A7	F065	[MULTLOAD]
+02A9	A3C6	[SETI]	I = 3c6
+02AB	F01E	[IADD]
+02AD	F065	[MULTLOAD]
+02AF	8500	[COPY]	V5 <- V0
+02B1	6001	[LI]	V0 = 0x1
+02B3	8150	[COPY]	V1 <- V5
+02B5	5010	[SKIP_RegE]	SKIP: TRUE	01==01
+02B9	3F00	[SKIP_EQ]	SKIP: FALSE	01!=00
+02BB	12F9	[GOTO] 2F9
 		(non updato)
-0206	DDE3	[DRAW]	(0,12)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	12!=18
-020C	1206	[GOTO] 206
+02F9	A3C4	[SETI]	I = 3c4
+02FB	F065	[MULTLOAD]
+02FD	8500	[COPY]	V5 <- V0
+02FF	A407	[SETI]	I = 407
+0301	F065	[MULTLOAD]
+0303	8100	[COPY]	V1 <- V0
+0305	8050	[COPY]	V0 <- V5
+0307	8210	[COPY]	V2 <- V1
+0309	8105	[SUB_C]	V1 -= V0 (c)
+030B	8120	[COPY]	V1 <- V2
+030D	9010	[SKIP_RegNE]	SKIP: TRUE	01!=02
+0311	3F01	[SKIP_EQ]	SKIP: TRUE	01==01
+0315	A3C4	[SETI]	I = 3c4
+0317	F065	[MULTLOAD]
+0319	7001	[ADD_EQ]	V0 += 0x1
+031B	A3C4	[SETI]	I = 3c4
+031D	F055	[MULTSTORE]
+031F	1247	[GOTO] 247
 		(non updato)
-0206	DDE3	[DRAW]	(0,18)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: TRUE	18==18
-020E	7D06	[ADD_EQ]	VD += 0x6
-0210	3D3C	[SKIP_EQ]	SKIP: FALSE	06!=3C
-0212	1204	[GOTO] 204
+0247	A3C4	[SETI]	I = 3c4
+0249	F065	[MULTLOAD]
+024B	8500	[COPY]	V5 <- V0
+024D	6001	[LI]	V0 = 0x1
+024F	8100	[COPY]	V1 <- V0
+0251	8050	[COPY]	V0 <- V5
+0253	8015	[SUB_C]	V0 -= V1 (c)
+0255	A3C5	[SETI]	I = 3c5
+0257	F055	[MULTSTORE]
+0259	A3C4	[SETI]	I = 3c4
+025B	F065	[MULTLOAD]
+025D	8500	[COPY]	V5 <- V0
+025F	A3C5	[SETI]	I = 3c5
+0261	F065	[MULTLOAD]
+0263	A3E6	[SETI]	I = 3e6
+0265	F01E	[IADD]
+0267	F065	[MULTLOAD]
+0269	8600	[COPY]	V6 <- V0
+026B	A3C4	[SETI]	I = 3c4
+026D	F065	[MULTLOAD]
+026F	8700	[COPY]	V7 <- V0
+0271	6001	[LI]	V0 = 0x1
+0273	8100	[COPY]	V1 <- V0
+0275	8070	[COPY]	V0 <- V7
+0277	8014	[ADD_C]	V0 += V1 (c)
+0279	A3E6	[SETI]	I = 3e6
+027B	F01E	[IADD]
+027D	F065	[MULTLOAD]
+027F	8100	[COPY]	V1 <- V0
+0281	8060	[COPY]	V0 <- V6
+0283	8013	[XOR]	V0 ^= V1
+0285	8150	[COPY]	V1 <- V5
+0287	A3C6	[SETI]	I = 3c6
+0289	F11E	[IADD]
+028B	F055	[MULTSTORE]
+028D	A3C5	[SETI]	I = 3c5
+028F	F065	[MULTLOAD]
+0291	8500	[COPY]	V5 <- V0
+0293	A3C5	[SETI]	I = 3c5
+0295	F065	[MULTLOAD]
+0297	A3C6	[SETI]	I = 3c6
+0299	F01E	[IADD]
+029B	F065	[MULTLOAD]
+029D	8150	[COPY]	V1 <- V5
+029F	A3E6	[SETI]	I = 3e6
+02A1	F11E	[IADD]
+02A3	F055	[MULTSTORE]
+02A5	A3C4	[SETI]	I = 3c4
+02A7	F065	[MULTLOAD]
+02A9	A3C6	[SETI]	I = 3c6
+02AB	F01E	[IADD]
+02AD	F065	[MULTLOAD]
+02AF	8500	[COPY]	V5 <- V0
+02B1	6001	[LI]	V0 = 0x1
+02B3	8150	[COPY]	V1 <- V5
+02B5	5010	[SKIP_RegE]	SKIP: FALSE	01!=00
+02B7	6F01	[LI]	VF = 0x1
+02B9	3F00	[SKIP_EQ]	SKIP: FALSE	01!=00
+02BB	12F9	[GOTO] 2F9
 		(non updato)
-0204	6E00	[LI]	VE = 0x0
-0206	DDE3	[DRAW]	(6,0)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	06!=18
-020C	1206	[GOTO] 206
+02F9	A3C4	[SETI]	I = 3c4
+02FB	F065	[MULTLOAD]
+02FD	8500	[COPY]	V5 <- V0
+02FF	A407	[SETI]	I = 407
+0301	F065	[MULTLOAD]
+0303	8100	[COPY]	V1 <- V0
+0305	8050	[COPY]	V0 <- V5
+0307	8210	[COPY]	V2 <- V1
+0309	8105	[SUB_C]	V1 -= V0 (c)
+030B	8120	[COPY]	V1 <- V2
+030D	9010	[SKIP_RegNE]	SKIP: FALSE	02==02
+030F	6F00	[LI]	VF = 0x0
+0311	3F01	[SKIP_EQ]	SKIP: FALSE	00!=01
+0313	1321	[GOTO] 321
 		(non updato)
-0206	DDE3	[DRAW]	(6,6)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	0C!=18
-020C	1206	[GOTO] 206
+0321	A3C3	[SETI]	I = 3c3
+0323	F065	[MULTLOAD]
+0325	8500	[COPY]	V5 <- V0
+0327	A406	[SETI]	I = 406
+0329	F065	[MULTLOAD]
+032B	8100	[COPY]	V1 <- V0
+032D	8050	[COPY]	V0 <- V5
+032F	8210	[COPY]	V2 <- V1
+0331	8105	[SUB_C]	V1 -= V0 (c)
+0333	8120	[COPY]	V1 <- V2
+0335	9010	[SKIP_RegNE]	SKIP: TRUE	01!=1F
+0339	3F01	[SKIP_EQ]	SKIP: FALSE	00!=01
+033B	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]	(6,12)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	12!=18
-020C	1206	[GOTO] 206
+0349	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]	(6,18)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: TRUE	18==18
-020E	7D06	[ADD_EQ]	VD += 0x6
-0210	3D3C	[SKIP_EQ]	SKIP: FALSE	0C!=3C
-0212	1204	[GOTO] 204
+0349	1349	[GOTO] 349
 		(non updato)
-0204	6E00	[LI]	VE = 0x0
-0206	DDE3	[DRAW]	(12,0)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	06!=18
-020C	1206	[GOTO] 206
+0349	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]	(12,6)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	0C!=18
-020C	1206	[GOTO] 206
+0349	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]	(12,12)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	12!=18
-020C	1206	[GOTO] 206
+0349	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]	(12,18)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: TRUE	18==18
-020E	7D06	[ADD_EQ]	VD += 0x6
-0210	3D3C	[SKIP_EQ]	SKIP: FALSE	12!=3C
-0212	1204	[GOTO] 204
+0349	1349	[GOTO] 349
 		(non updato)
-0204	6E00	[LI]	VE = 0x0
-0206	DDE3	[DRAW]	(18,0)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	06!=18
-020C	1206	[GOTO] 206
+0349	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]	(18,6)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	0C!=18
-020C	1206	[GOTO] 206
+0349	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]	(18,12)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	12!=18
-020C	1206	[GOTO] 206
+0349	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]	(18,18)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: TRUE	18==18
-020E	7D06	[ADD_EQ]	VD += 0x6
-0210	3D3C	[SKIP_EQ]	SKIP: FALSE	18!=3C
-0212	1204	[GOTO] 204
+0349	1349	[GOTO] 349
 		(non updato)
-0204	6E00	[LI]	VE = 0x0
-0206	DDE3	[DRAW]	(24,0)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	06!=18
-020C	1206	[GOTO] 206
+0349	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]	(24,6)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	0C!=18
-020C	1206	[GOTO] 206
+0349	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]	(24,12)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	12!=18
-020C	1206	[GOTO] 206
+0349	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]	(24,18)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: TRUE	18==18
-020E	7D06	[ADD_EQ]	VD += 0x6
-0210	3D3C	[SKIP_EQ]	SKIP: FALSE	1E!=3C
-0212	1204	[GOTO] 204
+0349	1349	[GOTO] 349
 		(non updato)
-0204	6E00	[LI]	VE = 0x0
-0206	DDE3	[DRAW]	(30,0)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	06!=18
-020C	1206	[GOTO] 206
+0349	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]	(30,6)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	0C!=18
-020C	1206	[GOTO] 206
+0349	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]	(30,12)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	12!=18
-020C	1206	[GOTO] 206
+0349	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]	(30,18)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: TRUE	18==18
-020E	7D06	[ADD_EQ]	VD += 0x6
-0210	3D3C	[SKIP_EQ]	SKIP: FALSE	24!=3C
-0212	1204	[GOTO] 204
+0349	1349	[GOTO] 349
 		(non updato)
-0204	6E00	[LI]	VE = 0x0
-0206	DDE3	[DRAW]	(36,0)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	06!=18
-020C	1206	[GOTO] 206
+0349	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]	(36,6)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	0C!=18
-020C	1206	[GOTO] 206
+0349	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]	(36,12)
-0208	7E06	[ADD_EQ]	VE += 0x6
-020A	3E18	[SKIP_EQ]	SKIP: FALSE	12!=18
-020C	1206	[GOTO] 206
+0349	1349	[GOTO] 349
 		(non updato)
-0206	DDE3	[DRAW]
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+0349	1349	[GOTO] 349
+		(non updato)
+034

@@ -25,13 +25,14 @@ typedef struct machine {
 
 int execute (Chip8 c, int debug);
 void memdump(Chip8 c);
+void monitordump(Chip8 c);
 unsigned char keyTranslate(unsigned char c);
 void draw(Chip8 chip8, unsigned char x, unsigned char y, unsigned char n);
 void drawScreen(Chip8 chip8);
 
 WINDOW * createWindow() {
     initscr(); //inizializza ncurses; necessario
-    WINDOW * w = newwin(24, 80, 0, 0);
+    WINDOW * w = newwin(32, 64, 0, 0);
     timeout(INPUTTIME); //quanto tempo aspetta per un input prima di dare ERR
     noecho();   //non mostra l'input da tastiera
     nodelay(stdscr, TRUE);  //non mi ricordo?
@@ -42,7 +43,7 @@ WINDOW * createWindow() {
 int main() {
     Chip8 chip8 = malloc(sizeof(struct machine));
     
-    FILE * source = fopen("MASTERMIND", "rb");
+    FILE * source = fopen("TETRIS", "rb");
 
     fseek(source, 0L, SEEK_END);
     int size = ftell(source);
@@ -63,11 +64,13 @@ int main() {
         createWindow();
     
     while (1) {
-        drawScreen(chip8);
+    //~ for (int i=0; i<16; i++) {
         execute(chip8, DEBUG);
         if(chip8->dt > 0) chip8->dt--;
+        drawScreen(chip8);
         usleep(CLOCK);
     }
+    monitordump(chip8);
 }
 
 void memdump(Chip8 chip8) {
@@ -75,6 +78,16 @@ void memdump(Chip8 chip8) {
     
     for (int i=0; i<4096; i+=2)
         fprintf(fout, "%03X\t%04X\n", i, (chip8->memory[i] << 8) | chip8->memory[i+1]);
+    fclose(fout);
+}
+
+void monitordump(Chip8 chip8) {
+    FILE * fout = fopen("mondump", "w");
+    for (int i=0; i<32*64; i++) {
+        fprintf(fout, "%d", chip8->monitor[i]);
+        if (i % 64 == 0)
+            fprintf(fout, "\n");
+    }
     fclose(fout);
 }
 
@@ -200,21 +213,25 @@ int execute(Chip8 chip8, int debug) {
 
                 case 4:
                     if (debug) { printf("[ADD_C]\tV%X += V%X (c)\n", b2, b3);}
-                    if (chip8->registers[b2] + chip8->registers[b3] > 255)
+                    if (chip8->registers[b2] + chip8->registers[b3] > 255) {
                         chip8->registers[0xF] = 1;
-                    chip8->registers[b2] += chip8->registers[b3];
+                    else 
+                        chip8->registers[0xF] = 0;
+                    chip8->registers[b2] += chip8->registers[b3]; //corretto (tiene i 8 bit pù bassi)
                     break;
                     
                 case 5:
                     if (debug) { printf("[SUB_C]\tV%X -= V%X (c)\n", b2, b3);}
                     if (chip8->registers[b2] - chip8->registers[b3] < 0)
                         chip8->registers[0xF] = 1;
+                    else 
+                        chip8->registers[0xF] = 0;
                     chip8->registers[b2] -= chip8->registers[b3];
                     break;
 
                 case 6:
                     if (debug) { printf("[SHIFTR]\tV%X, V%X\n", b2, b3);}
-                    chip8->registers[0xF] = chip8->registers[b3]&0b00000001; //GIUSTO?!
+                    chip8->registers[0xF] = chip8->registers[b3] & 0x01; //GIUSTO?!
                     chip8->registers[b3] = chip8->registers[b3] >> 1;
                     chip8->registers[b2] = chip8->registers[b3];
                     break;
@@ -223,12 +240,14 @@ int execute(Chip8 chip8, int debug) {
                     if (debug) { printf("[SUB_C]\tV%X = V%X - V%X (c)\n", b2, b3, b2);}
                     if (chip8->registers[b3] - chip8->registers[b2] < 0)
                         chip8->registers[0xF] = 1;
+                    else 
+                        chip8->registers[0xF] = 0;
                     chip8->registers[b2] = chip8->registers[b3] - chip8->registers[b2];
                     break;
 
                 case 0xE:
                     if (debug) { printf("[SHIFTL]\tV%X, V%X\n", b2, b3);}
-                    chip8->registers[0xF] = chip8->registers[b3]&0b10000000; //GIUSTO?!
+                    chip8->registers[0xF] = (chip8->registers[b3]&0b10000000)>>7; //GIUSTO?!
                     chip8->registers[b3] = chip8->registers[b3] << 1;
                     chip8->registers[b2] = chip8->registers[b3];
                     break;
@@ -257,7 +276,7 @@ int execute(Chip8 chip8, int debug) {
         
         case 0xD:
             if (debug) { printf("[DRAW]\t(%d,%d)\n", chip8->registers[b2], chip8->registers[b3]); }
-            draw(chip8, b2, b3, b4);
+            draw(chip8, chip8->registers[b2], chip8->registers[b3], b4);
             break;
             
         case 0xE:
@@ -305,14 +324,18 @@ int execute(Chip8 chip8, int debug) {
 
                 case 0x55:
                     if (debug) { printf("[MULTSTORE]\n");}
-                    for (int i=0; i<b2+1; i++)
-                        chip8->memory[chip8->I++] = chip8->registers[i]; //I si aggiorna???
+                    for (int i=0; i<=b2; i++) {
+                        chip8->memory[chip8->I] = chip8->registers[i]; //I si aggiorna???
+                        chip8->I++;
+                    }
                     break;
 
                 case 0x65:
                     if (debug) { printf("[MULTLOAD]\n");}
-                    for (int i=0; i<b2+1; i++)
-                        chip8->registers[i] = chip8->memory[chip8->I++];
+                    for (int i=0; i<=b2; i++) {
+                        chip8->registers[i] = chip8->memory[chip8->I];
+                        chip8->I++;
+                    }
                     break;
 
                 case 0x0A:
@@ -358,20 +381,25 @@ unsigned char keyTranslate(unsigned char c) {
 }
 
 void draw(Chip8 chip8, unsigned char x, unsigned char y, unsigned char n) {
-    //~ int initPos = x + 64 * y;
-    //~ int pos     = initPos;
+    int hasFlipped = 0;
     
     for (int i=0; i<n; i++) {   //per ogni riga dello spirito
         int pos = x + 64 * (y + i);
-        
         char bits = chip8->memory[chip8->I + i];    //riga nesima dello spirito
+        if (DEBUG) printf("\t\t\t\t");
+        
         for (int b=0; b<8; b++) {
-            unsigned char newVal = (bits >> (8-b)) & 1; // & o &&?
-            if (newVal != chip8->monitor[pos]) 
+            unsigned char newVal = bits >> (7 - b) & 0x01;
+            if (newVal != chip8->monitor[pos]) {
                 chip8->registers[0xF] = 1;
+                hasFlipped = 1;
+            }
             chip8->monitor[pos] = newVal;
+            printf("%d", newVal);
             pos++;
         }
+        if (DEBUG) printf("\n");
+        if (!hasFlipped) chip8->registers[0xF] = 0;
     }
 }
         
