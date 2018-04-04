@@ -7,7 +7,7 @@
 
 #define CLOCK       8000
 #define INPUTTIME   80
-#define DEBUG       1
+#define DEBUG       0
 
 typedef struct machine {
     unsigned char memory[4096];
@@ -117,11 +117,6 @@ int execute(Chip8 chip8, int debug) {
                 chip8->pc = chip8->stack[--(chip8->sp)];
                 updatePc = 0;
             }
-
-            else
-                if (debug) { printf("[UNKNOWN]\n");}
-
-            break;
             
         case 1:
             if (debug) { printf("[GOTO] %03X\n", instruction & 0x0FFF);}
@@ -265,7 +260,7 @@ int execute(Chip8 chip8, int debug) {
 
         case 0xB:
             if (debug) { printf("[JUMP]\tPC = %03x\n", instruction & 0x0fff);}
-            chip8->pc = instruction & 0x0fff;
+            chip8->pc += instruction & 0x0fff;
             updatePc = 0;
             break;
         
@@ -281,8 +276,9 @@ int execute(Chip8 chip8, int debug) {
             
         case 0xE:
             if (b3 == 9 && b4 == 0xE) {   
-                if (debug) { printf("[KEYEQ]\n"); }
-                if ((ch = getch()) == ERR)
+                ch = getch();
+                if (debug) { printf("[KEYEQ]\tV%x=%x\t%x\n", b2, chip8->registers[b2], ch); }
+                if (ch == ERR)
                     break;
                 else {
                     if (keyTranslate(ch) == chip8->registers[b2])
@@ -290,7 +286,7 @@ int execute(Chip8 chip8, int debug) {
                 }
             }
             else if (b3 == 0xA && b4 == 1) {
-                if (debug) { printf("[KEYNE]\n"); }
+                if (debug) { printf("[KEYNE]\tV%x=%x\n", b2, chip8->registers[b2]); }
                 if ((ch = getch()) == ERR)
                     break;
                 else {
