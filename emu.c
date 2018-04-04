@@ -118,6 +118,8 @@ int execute(Chip8 chip8, int debug) {
                 updatePc = 0;
             }
             
+            break;
+            
         case 1:
             if (debug) { printf("[GOTO] %03X\n", instruction & 0x0FFF);}
             chip8->pc = instruction & 0x0FFF;
@@ -260,7 +262,7 @@ int execute(Chip8 chip8, int debug) {
 
         case 0xB:
             if (debug) { printf("[JUMP]\tPC = %03x\n", instruction & 0x0fff);}
-            chip8->pc += instruction & 0x0fff;
+            chip8->pc = chip8->registers[0] + (instruction & 0x0fff);
             updatePc = 0;
             break;
         
