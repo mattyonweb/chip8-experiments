@@ -1,9 +1,8 @@
 #include <stdio.h>
 
 int main() {
-    unsigned char c = 0xB7;
-    unsigned char d = 0x80;
-    
-    //~ unsigned char e = c + d;
-    printf("%d", (d & 0b10000000) >> 7);
+    for (int i=0; i<10; i++) {
+        unsigned char c = (rand()%255) & 0x03;
+        printf("%d\n", c);
+    }
 }

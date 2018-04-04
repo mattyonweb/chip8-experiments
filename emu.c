@@ -213,7 +213,7 @@ int execute(Chip8 chip8, int debug) {
 
                 case 4:
                     if (debug) { printf("[ADD_C]\tV%X += V%X (c)\n", b2, b3);}
-                    if (chip8->registers[b2] + chip8->registers[b3] > 255) {
+                    if (chip8->registers[b2] + chip8->registers[b3] > 255)
                         chip8->registers[0xF] = 1;
                     else 
                         chip8->registers[0xF] = 0;
@@ -390,12 +390,12 @@ void draw(Chip8 chip8, unsigned char x, unsigned char y, unsigned char n) {
         
         for (int b=0; b<8; b++) {
             unsigned char newVal = bits >> (7 - b) & 0x01;
-            if (newVal != chip8->monitor[pos]) {
+            if (newVal == 1 && chip8->monitor[pos] == 1) {
                 chip8->registers[0xF] = 1;
                 hasFlipped = 1;
             }
-            chip8->monitor[pos] = newVal;
-            printf("%d", newVal);
+            chip8->monitor[pos] ^= newVal;
+            if (DEBUG) printf("%d", newVal);
             pos++;
         }
         if (DEBUG) printf("\n");
