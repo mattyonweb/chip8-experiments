@@ -10,8 +10,9 @@ WINDOW * createWindow() {
     WINDOW * w = newwin(32, 64, 0, 0);
     timeout(INPUTTIME); //quanto tempo aspetta per un input prima di dare ERR
     noecho();           //non mostra l'input da tastiera
-    nodelay(stdscr, TRUE);  //getch() diventa non-blocking dopo INPUTTIME secondi tipo
+    //~ nodelay(stdscr, TRUE);  //getch() diventa non-blocking dopo INPUTTIME secondi tipo
     cbreak();           //boh?!
+    curs_set(0);
     return w;
 }
 
@@ -201,13 +202,13 @@ int execute(Chip8 chip8, int debug) {
                     
                 case 5:
                     if (debug) { printf("[SUB_C]\tV%X -= V%X\t", b2, b3);}
-                    if (chip8->registers[b2] - chip8->registers[b3] < 0) {
+                    if (chip8->registers[b2] - chip8->registers[b3] > 0) {
                         chip8->registers[0xF] = 1;
-                        printf("CARRY\n");
+                        if (debug) printf("CARRY\n");
                     }
                     else { 
                         chip8->registers[0xF] = 0;
-                        printf("NOCARRY\n");
+                        if (debug) printf("NOCARRY\n");
                     }
                     chip8->registers[b2] -= chip8->registers[b3];
                     break;
@@ -221,7 +222,7 @@ int execute(Chip8 chip8, int debug) {
 
                 case 7:
                     if (debug) { printf("[SUB_C]\tV%X = V%X - V%X (c)\n", b2, b3, b2);}
-                    if (chip8->registers[b3] - chip8->registers[b2] < 0)
+                    if (chip8->registers[b3] - chip8->registers[b2] > 0)
                         chip8->registers[0xF] = 1;
                     else 
                         chip8->registers[0xF] = 0;
@@ -298,7 +299,7 @@ int execute(Chip8 chip8, int debug) {
                     break;
                 
                 case 0x29:
-                    printf("DIOCANE\n");            //TODO
+                    if (debug) { printf("DIOCANE\n"); }            //TODO
                     break;
                      
                 case 0x1E:
@@ -351,8 +352,8 @@ int execute(Chip8 chip8, int debug) {
     else
         if (debug) { printf("\t\t(non updato)\n");}
     
-    if (needToDraw && !debug)
-        drawScreen(chip8);
+    //~ if (needToDraw && !debug)
+        //~ drawScreen(chip8); //evita flickering
     return 0;
 
 }
@@ -383,12 +384,23 @@ void draw(Chip8 chip8, unsigned char x, unsigned char y, unsigned char n) {
                 hasFlipped = 1;
             }
             chip8->monitor[pos] ^= newVal;
-            if (DEBUG) printf("%d", newVal);
+            
+            if (!DEBUG) { //disegna
+                if (chip8->monitor[pos] == 0) 
+                    mvprintw(pos / 64, pos % 64, " ");
+                else
+                    mvprintw(pos / 64, pos % 64, "x");
+            } 
+            else //outputta debug
+                printf("%d", newVal);
+                
             pos++;
         }
         if (DEBUG) printf("hasFlipped = %d\n", hasFlipped);
         if (!hasFlipped) chip8->registers[0xF] = 0;
     }
+    
+    refresh();
 }
         
 void drawScreen(Chip8 chip8) {

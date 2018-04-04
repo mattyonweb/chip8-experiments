@@ -2,7 +2,7 @@
 #define EMU_H
 
 #define CLOCK       8000
-#define INPUTTIME   8000
+#define INPUTTIME   120
 #define DEBUG       0
 
 typedef struct machine {

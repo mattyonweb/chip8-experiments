@@ -7,7 +7,7 @@
 void prompt(Chip8 chip8);
 
 int main() {
-    Chip8 chip8 = initChip8("TETRIS");
+    Chip8 chip8 = initChip8("BRIX");
     
     if (DEBUG) memdump(chip8);
     if (!DEBUG)
@@ -17,8 +17,6 @@ int main() {
         execute(chip8, DEBUG);
         if (DEBUG) 
             prompt(chip8);
-        //~ else
-            //~ drawScreen(chip8);
         if(chip8->dt > 0)
             chip8->dt--;
         usleep(CLOCK);
@@ -32,20 +30,19 @@ void prompt(Chip8 chip8) {
     
     while (!end) {
         printf(">");
-        scanf("%s", s);
+        s[0] = getchar();
         
         switch(s[0]) {
             case 'v':
-                machinedump(chip8, keyTranslate(s[1]));
+                machinedump(chip8, keyTranslate(getchar()));
                 break;
             case 'c':
                 end = 1;
                 break;
             default:
+                end = 1;
                 break;
         }
-        
-        printf("\n");
     }
     free(s);
 }
