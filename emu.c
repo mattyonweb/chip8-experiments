@@ -26,6 +26,8 @@ typedef struct machine {
 int execute (Chip8 c, int debug);
 void memdump(Chip8 c);
 unsigned char keyTranslate(unsigned char c);
+void draw(Chip8 chip8, unsigned char x, unsigned char y, unsigned char n);
+void drawScreen(Chip8 chip8);
 
 WINDOW * createWindow() {
     initscr(); //inizializza ncurses; necessario
@@ -57,10 +59,12 @@ int main() {
         chip8->registers[i] = 0;
     
     memdump(chip8);
-    createWindow();
+    if (!DEBUG)
+        createWindow();
     
     while (1) {
-        execute(chip8, 0);
+        drawScreen(chip8);
+        execute(chip8, DEBUG);
         if(chip8->dt > 0) chip8->dt--;
         usleep(CLOCK);
     }
@@ -251,8 +255,14 @@ int execute(Chip8 chip8, int debug) {
             if (debug) { printf("[RAND]\tV%X = rand()\n", b2);}
             break;
         
+        case 0xD:
+            if (debug) { printf("[DRAW]\t(%d,%d)\n", chip8->registers[b2], chip8->registers[b3]); }
+            draw(chip8, b2, b3, b4);
+            break;
+            
         case 0xE:
-            if (b3 == 9 && b4 == 0xE) {            
+            if (b3 == 9 && b4 == 0xE) {   
+                if (debug) { printf("[KEYEQ]\n"); }
                 if ((ch = getch()) == ERR)
                     break;
                 else {
@@ -261,6 +271,7 @@ int execute(Chip8 chip8, int debug) {
                 }
             }
             else if (b3 == 0xA && b4 == 1) {
+                if (debug) { printf("[KEYNE]\n"); }
                 if ((ch = getch()) == ERR)
                     break;
                 else {
@@ -344,4 +355,32 @@ unsigned char keyTranslate(unsigned char c) {
     if (c >= 'A' && c <= 'F')
         return (c - 'A') + 10;
     return 255;
+}
+
+void draw(Chip8 chip8, unsigned char x, unsigned char y, unsigned char n) {
+    //~ int initPos = x + 64 * y;
+    //~ int pos     = initPos;
+    
+    for (int i=0; i<n; i++) {   //per ogni riga dello spirito
+        int pos = x + 64 * (y + i);
+        
+        char bits = chip8->memory[chip8->I + i];    //riga nesima dello spirito
+        for (int b=0; b<8; b++) {
+            unsigned char newVal = (bits >> (8-b)) & 1; // & o &&?
+            if (newVal != chip8->monitor[pos]) 
+                chip8->registers[0xF] = 1;
+            chip8->monitor[pos] = newVal;
+            pos++;
+        }
+    }
+}
+        
+void drawScreen(Chip8 chip8) {
+    clear();
+    for (int i=0; i<64*32; i++) 
+        if (chip8->monitor[i] == 0)
+            mvprintw(i / 64, i % 64, " ");
+        else
+            mvprintw(i / 64, i % 64, "x");
+    refresh();
 }
