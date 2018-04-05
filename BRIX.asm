@@ -1,49 +1,56 @@
 0200	li		VE, 05
-0202	li		V5, 00
-0204	li		VB, 06      ;spiazzamento sulle y
-0206	li		VA, 00      ;spiazzamento sulle x
-0208	li		I, 30c      ;indirizzo spirito tavoletta da rompere?
-020a	draw	VA, VB, 1   ;disegna tavoletta
-020c	add		VA, VA, 04  ;sposta di 4 sulle x
-020e	skip_eq	VA, 40      ;se non ho ancora disegnato 10 tavolette
-0210	j		208         ;disegnane un'altra
-0212	add		VB, VB, 02  ;altrimenti: spostati in giù sulle y di 2
-0214	skip_eq	VB, 12      ;se non ho ancora disegnato 6 file di tavolette
-0216	j		206         ;disegnane un'altra
-0218	li		VC, 20      ;altrimenti: VC = y della racchetta (32)?
-021a	li		VD, 1f
-021c	li		I, 310
-021e	draw	VC, VD, 1
-0220	jal		2f6
-0222	li		V0, 00
-0224	li		V1, 00
-0226	li		I, 312
-0228	draw	V0, V1, 1
-022a	add		V0, V0, 08
-022c	li		I, 30e
-022e	draw	V0, V1, 1
-0230	li		V0, 40
-0232	mv		DT, V0
-0234	mv		V0, DT
-0236	skip_eq	V0, 00
-0238	j		234
-023a	rand	V6
-023c	li		V7, 1e
-023e	li		V8, 01
+0202	li		V5, 00      ;ipotizzo sia il punteggio del giocatore
+
+initDisegnaTavolette:
+    0204	li		VB, 06      ;spiazzamento sulle y
+    0206	li		VA, 00      ;spiazzamento sulle x
+    0208	li		I, 30c      ;indirizzo spirito tavoletta da rompere
+    020a	draw	VA, VB, 1   ;disegna tavoletta
+    020c	add		VA, VA, 04  ;sposta di 4 sulle x
+    020e	skip_eq	VA, 40      ;se non ho ancora disegnato 10 tavolette
+    0210	j		208         ;disegnane un'altra
+    0212	add		VB, VB, 02  ;altrimenti: spostati in giù sulle y di 2
+    0214	skip_eq	VB, 12      ;se non ho ancora disegnato 6 file di tavolette
+    0216	j		206         ;disegnane un'altra
+
+initDisegnaRacchetta:
+    0218	li		VC, 20      ;altrimenti: VC = x della racchetta (32)?
+    021a	li		VD, 1f      ;VD = y della racchetta(31)?
+    021c	li		I, 310      ;indirizzo rachetta
+    021e	draw	VC, VD, 1   ;disegna racchetta
+
+disegnaVite:
+    0220	jal		2f6 (disegnaPunteggio)  ;disegna punteggio
+    0222	li		V0, 00      ;v0 = X delle vite rimanenti (sono 4!)
+    0224	li		V1, 00      ;v1 = Y delle vite rimanenti
+    0226	li		I, 312      ;spirito delle vite rimanenti
+    0228	draw	V0, V1, 1   ;disegna le    vite rimanenti
+    022a	add		V0, V0, 08  ;spostati di 8 sulle x
+    022c	li		I, 30e      ;spirito della quinta vita rimanente
+    022e	draw	V0, V1, 1   ;disegna la quinta vita rimanente
+    
+0230	li		V0, 40      ;v0=40   
+0232	mv		DT, V0      ;dt=v0
+0234	mv		V0, DT      ;v0=dt
+0236	skip_eq	V0, 00      ;se v0 != 0         ;;INTERESSANTE: siamo sicuri che arrivi prima o poi a 0 preciso?
+0238	j		234         ;allora torna indietro a 234
+023a	rand	V6          ;altrimenti: v6 = xPallina = random()
+023c	li		V7, 1e      ;v7 = yPallina = penultima riga
+023e	li		V8, 01      
 0240	li		V9, ff
-0242	li		I, 30e
-0244	draw	V6, V7, 1
-0246	li		I, 310
-0248	draw	VC, VD, 1
-024a	li		V0, 04
-024c	keyne	V0
-024e	add		VC, VC, fe
-0250	li		V0, 06
-0252	keyne	V0
-0254	add		VC, VC, 02
-0256	li		V0, 3f
-0258	and		VC, V0
-025a	draw	VC, VD, 1
+0242	li		I, 30e      ;spirito pallina
+0244	draw	V6, V7, 1   ;disegna pallina
+0246	li		I, 310      ;spirito racchetta
+0248	draw	VC, VD, 1   ;cancella (?) racchetta
+024a	li		V0, 04      ;input da controllare = 0x4
+024c	keyne	V0          ;se key() == 0x4:
+024e	add		VC, VC, fe  ;sposta a sx di 2 la racchetta (x.racchetta -= 2) TODO: perché 2?
+0250	li		V0, 06      ;input da controllare = 0x4
+0252	keyne	V0          ;se key() == 0x6:
+0254	add		VC, VC, 02  ;sposta a dx di 2 la racchetta
+0256	li		V0, 3f      ;v0 = 63 = 0011 1111
+0258	and		VC, V0      ;AND tra x.racchetta e la maschera F3; serve per il wrapping: se x.racchetta > 63 allora questa operazione disegna la racchetta non a 64 ma a 0
+025a	draw	VC, VD, 1   ;disegna racchetta nella nuova posizione
 025c	li		I, 30e
 025e	draw	V6, V7, 1
 0260	add_curry	V6, V6, V8
@@ -121,18 +128,21 @@
 02f0	mv		ST, V0
 02f2	li		V9, ff
 02f4	j		270
-02f6	li		I, 314
-02f8	bcd		V5
-02fa	multiload 0-2
-02fc	non implementata
-02fe	li		V3, 37
-0300	li		V4, 00
-0302	draw	V3, V4, 5
-0304	add		V3, V3, 05
-0306	non implementata
-0308	draw	V3, V4, 5
-030a	ret
-030c	ISTRUZIONE SCONOSCIUTA E000
-030e	mv		V0, V0
-0310	ISTRUZIONE SCONOSCIUTA FC00
-0312	li		I, a00
+
+disegnaPunteggio:
+    02f6	li		I, 314              ;punta a spazio vuoto
+    02f8	bcd		V5                  ;salva le centinaia-decine-unità di V5 (punteggio?) nello spazio vuoto
+    02fa	multiload 0-2               ;i registri V0,V1,V2 ora contengono centinaia-decine-unita
+    02fc	non implementata            ;carica spiriti numeri
+    02fe	li		V3, 37              ;coordinate spirito numero x
+    0300	li		V4, 00              ;coordinate spirito numero y
+    0302	draw	V3, V4, 5           ;disegna il numero
+    0304	add		V3, V3, 05          ;spostati a dx di 5 (?)
+    0306	non implementata            ;prendi spirito numero
+    0308	draw	V3, V4, 5           ;disegna seconda cifra punteggio
+    030a	ret                         ;ritorna
+    
+030c	ISTRUZIONE SCONOSCIUTA E000 ;è lo spirito del blocchetto da rompere
+030e	mv		V0, V0              ;è lo spirito della palla (X-------)
+0310	ISTRUZIONE SCONOSCIUTA FC00 ;è lo spirito della racchetta
+0312	li		I, a00              ;è lo spirito delle vite rimanenti (X-X-X-X-)
