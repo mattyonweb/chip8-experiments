@@ -10,9 +10,9 @@
 0212	add		VB, VB, 02  ;altrimenti: spostati in giù sulle y di 2
 0214	skip_eq	VB, 12      ;se non ho ancora disegnato 6 file di tavolette
 0216	j		206         ;disegnane un'altra
-0218	li		VC, 20      ;altrimenti: VC = y della racchetta (32)
-021a	li		VD, 1f      
-021c	li		I, 310      
+0218	li		VC, 20      ;altrimenti: VC = y della racchetta (32)?
+021a	li		VD, 1f
+021c	li		I, 310
 021e	draw	VC, VD, 1
 0220	jal		2f6
 0222	li		V0, 00
@@ -124,10 +124,15 @@
 02f6	li		I, 314
 02f8	bcd		V5
 02fa	multiload 0-2
+02fc	non implementata
 02fe	li		V3, 37
 0300	li		V4, 00
 0302	draw	V3, V4, 5
 0304	add		V3, V3, 05
+0306	non implementata
 0308	draw	V3, V4, 5
-030c	?030e	mv		V0, V0
+030a	ret
+030c	ISTRUZIONE SCONOSCIUTA E000
+030e	mv		V0, V0
+0310	ISTRUZIONE SCONOSCIUTA FC00
 0312	li		I, a00

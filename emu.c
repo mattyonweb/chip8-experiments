@@ -76,7 +76,7 @@ void disassemble(Chip8 chip8) {
     FILE* asmout = fopen("asm.asm", "w");
     for (unsigned short i=0; i<4096; i+=2) {
         chip8->pc = i;
-        if (chip8->memory[chip8->pc] == 0) continue;
+        if (chip8->memory[chip8->pc] == 0 && chip8->memory[chip8->pc+1] == 0) continue;
         execute(chip8, 0, asmout);
     }
     chip8->pc = 512;
@@ -99,7 +99,6 @@ int execute(Chip8 chip8, int debug, FILE* asmf) {
 
     switch (b1) {
         case 0:
-            printf("DIOCANE?");
             if (instruction == 0x00E0) {
                 if (debug) { printf("[CLEAR_DISPLAY]\n");}
                 if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "clear\n"); break; }
@@ -114,6 +113,10 @@ int execute(Chip8 chip8, int debug, FILE* asmf) {
                 updatePc = 0;
             }
             
+            else {
+                if (debug) { printf("[ATTENZIONE! ISTRUZIONE NON ESISTENTE]\n"); }
+                if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "ISTRUZIONE SCONOSCIUTA %04X\n", instruction); break; }
+            }
             break;
             
         case 1:
@@ -267,7 +270,8 @@ int execute(Chip8 chip8, int debug, FILE* asmf) {
                     break;
                                         
                 default:
-                    if (debug) { printf("error\n");}
+                    if (debug) { printf("[ATTENZIONE! ISTRUZIONE NON ESISTENTE]\n"); }
+                    if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "ISTRUZIONE SCONOSCIUTA %04X\n", instruction); break; }
                     break;
             }
             break;
@@ -292,7 +296,6 @@ int execute(Chip8 chip8, int debug, FILE* asmf) {
             break;
         
         case 0xD:
-            printf("DIOCANE\t");
             if (debug) { printf("[DRAW]\t(%d,%d)\n", chip8->registers[b2], chip8->registers[b3]); }
             if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "draw\tV%X, V%X, %d\n", b2, b3, b4); break; }
             draw(chip8, chip8->registers[b2], chip8->registers[b3], b4);
@@ -317,8 +320,9 @@ int execute(Chip8 chip8, int debug, FILE* asmf) {
                 break;
             }
             else {
-                if (debug) {printf("[???]\n");}
-                if (asmf)  {fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "?", b2); break;}
+                if (debug) { printf("[ATTENZIONE! ISTRUZIONE NON ESISTENTE]\n"); }
+                if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "ISTRUZIONE SCONOSCIUTA %04X\n", instruction); break; }
+                break;
             }
             break;
             
@@ -343,7 +347,8 @@ int execute(Chip8 chip8, int debug, FILE* asmf) {
                     break;
                 
                 case 0x29:
-                    if (debug) { printf("DIOCANE\n"); }            //TODO
+                    if (debug) { printf("DIOCANE\n"); }
+                    if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "non implementata\n", b2); break; }            //TODO
                     break;
                      
                 case 0x1E:
@@ -387,12 +392,15 @@ int execute(Chip8 chip8, int debug, FILE* asmf) {
                     break;
                     
                 default:
+                    if (debug) { printf("[ATTENZIONE! ISTRUZIONE NON ESISTENTE]\n"); }
+                    if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "ISTRUZIONE SCONOSCIUTA %04X\n", instruction); break; }
                     break;
             }
             break;
 
         default:
-            if (debug) { printf("[UNKNOWN]\n");}
+            if (debug) { printf("[ATTENZIONE! ISTRUZIONE NON ESISTENTE]\n"); }
+            if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "ISTRUZIONE SCONOSCIUTA %04X\n", instruction); break; }
             break;
     }
     

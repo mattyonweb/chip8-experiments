@@ -27,7 +27,8 @@
 0234	mv		V0, DT
 0236	skip_eq	V0, 00
 0238	j		234
-023a	rand	V6023c	li		V7, 1e
+023a	rand	V6
+023c	li		V7, 1e
 023e	li		V8, 01
 0240	li		V9, ff
 0242	li		I, 30e
@@ -123,10 +124,15 @@
 02f6	li		I, 314
 02f8	bcd		V5
 02fa	multiload 0-2
+02fc	non implementata
 02fe	li		V3, 37
 0300	li		V4, 00
 0302	draw	V3, V4, 5
 0304	add		V3, V3, 05
+0306	non implementata
 0308	draw	V3, V4, 5
-030c	?030e	mv		V0, V0
+030a	ret
+030c	ISTRUZIONE SCONOSCIUTA E000
+030e	mv		V0, V0
+0310	ISTRUZIONE SCONOSCIUTA FC00
 0312	li		I, a00
