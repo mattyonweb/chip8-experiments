@@ -34,33 +34,36 @@ disegnaVite:
 0234	mv		V0, DT      ;v0=dt
 0236	skip_eq	V0, 00      ;se v0 != 0         ;;INTERESSANTE: siamo sicuri che arrivi prima o poi a 0 preciso?
 0238	j		234         ;allora torna indietro a 234
-023a	rand	V6          ;altrimenti: v6 = xPallina = random()
+023a	rand	V6          ;v6 = xPallina = random()
 023c	li		V7, 1e      ;v7 = yPallina = penultima riga
-023e	li		V8, 01      
-0240	li		V9, ff
+023e	li		V8, 01      ;"accelerazione" sulle x (vai in su di 1)
+0240	li		V9, ff      ;"accelerazione" sulle y (velocità laterale) (ff sfrutta l'overflow)
 0242	li		I, 30e      ;spirito pallina
 0244	draw	V6, V7, 1   ;disegna pallina
-0246	li		I, 310      ;spirito racchetta
-0248	draw	VC, VD, 1   ;cancella (?) racchetta
-024a	li		V0, 04      ;input da controllare = 0x4
-024c	keyne	V0          ;se key() == 0x4:
-024e	add		VC, VC, fe  ;sposta a sx di 2 la racchetta (x.racchetta -= 2) TODO: perché 2?
-0250	li		V0, 06      ;input da controllare = 0x4
-0252	keyne	V0          ;se key() == 0x6:
-0254	add		VC, VC, 02  ;sposta a dx di 2 la racchetta
-0256	li		V0, 3f      ;v0 = 63 = 0011 1111
-0258	and		VC, V0      ;AND tra x.racchetta e la maschera F3; serve per il wrapping: se x.racchetta > 63 allora questa operazione disegna la racchetta non a 64 ma a 0
-025a	draw	VC, VD, 1   ;disegna racchetta nella nuova posizione
-025c	li		I, 30e
-025e	draw	V6, V7, 1
-0260	add_curry	V6, V6, V8
-0262	add_curry	V7, V7, V9
-0264	li		V0, 3f
-0266	and		V6, V0
-0268	li		V1, 1f
-026a	and		V7, V1
-026c	skip_ne	V7, 1f
-026e	j		2ac
+
+spostaRacchetta:
+    0246	li		I, 310      ;spirito racchetta
+    0248	draw	VC, VD, 1   ;cancella (?) racchetta
+    024a	li		V0, 04      ;input da controllare = 0x4
+    024c	keyne	V0          ;se key() == 0x4:
+    024e	add		VC, VC, fe  ;sposta a sx di 2 la racchetta (x.racchetta -= 2) TODO: perché 2?
+    0250	li		V0, 06      ;input da controllare = 0x4
+    0252	keyne	V0          ;se key() == 0x6:
+    0254	add		VC, VC, 02  ;sposta a dx di 2 la racchetta
+    0256	li		V0, 3f      ;v0 = 63 = 0011 1111
+    0258	and		VC, V0      ;AND tra x.racchetta e la maschera F3; serve per il wrapping: se x.racchetta > 63 allora questa operazione disegna la racchetta non a 64 ma a 0
+    025a	draw	VC, VD, 1   ;disegna racchetta nella nuova posizione
+    
+025c	li		I, 30e      ;spirito pallina
+025e	draw	V6, V7, 1   ;cancella pallina
+0260	add_curry	V6, V6, V8  ;aggiorna x pallina 
+0262	add_curry	V7, V7, V9  ;aggiorna y pallina (=> decresce y di 1)
+0264	li		V0, 3f      ;3f = 63 = maxX = 0011 1111
+0266	and		V6, V0      ;sempre per il wrapping sulle x (v. 0258) (?che senso ha il wrapping qui?)
+0268	li		V1, 1f      ;1f = 31 = maxY = 0001 1111
+026a	and		V7, V1      ;wrapping sulle y (?)
+026c	skip_ne	V7, 1f      ;se ypallina == 32: (se pallina tocca il bordo sotto)
+026e	j		2ac         ;j to pallina in fondo
 0270	skip_ne	V6, 00
 0272	li		V8, 01
 0274	skip_ne	V6, 3f
@@ -91,6 +94,8 @@ disegnaVite:
 02a6	skip_ne	V5, 60
 02a8	j		2de
 02aa	j		246
+
+pallinaInFondo:
 02ac	li		V9, ff
 02ae	mv		V0, V6
 02b0	sub_curry	V0, V0, VC
