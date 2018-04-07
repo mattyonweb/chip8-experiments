@@ -2,8 +2,8 @@
 #define EMU_H
 
 #define CLOCK       5000
-#define INPUTTIME   0
-#define DEBUG       1
+#define INPUTTIME   25
+#define DEBUG       0
 
 typedef struct machine {
     unsigned char memory[4096];

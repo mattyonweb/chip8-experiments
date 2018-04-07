@@ -36,8 +36,8 @@ disegnaVite:
 0238	j		234         ;allora torna indietro a 234
 023a	rand	V6          ;v6 = xPallina = random()
 023c	li		V7, 1e      ;v7 = yPallina = penultima riga
-023e	li		V8, 01      ;"accelerazione" sulle x (vai in su di 1)
-0240	li		V9, ff      ;"accelerazione" sulle y (velocità laterale) (ff sfrutta l'overflow)
+023e	li		V8, 01      ;"accelerazione" sulle x (velocità laterale)
+0240	li		V9, ff      ;"accelerazione" sulle y (vai in su di 1) (ff sfrutta l'overflow)
 0242	li		I, 30e      ;spirito pallina
 0244	draw	V6, V7, 1   ;disegna pallina
 
@@ -64,36 +64,36 @@ spostaRacchetta:
 026a	and		V7, V1      ;wrapping sulle y (?)
 026c	skip_ne	V7, 1f      ;se ypallina == 32: (se pallina tocca il bordo sotto)
 026e	j		2ac         ;j to pallina in fondo
-0270	skip_ne	V6, 00
-0272	li		V8, 01
-0274	skip_ne	V6, 3f
-0276	li		V8, ff
-0278	skip_ne	V7, 00
-027a	li		V9, 01
-027c	draw	V6, V7, 1
-027e	skip_eq	VF, 01
-0280	j		2aa
-0282	skip_ne	V7, 1f
-0284	j		2aa
-0286	li		V0, 05
-0288	sub_curry	V0, V0, V7
-028a	skip_eq	VF, 00
-028c	j		2aa
-028e	li		V0, 01
-0290	mv		ST, V0
-0292	mv		V0, V6
-0294	li		V1, fc
-0296	and		V0, V1
-0298	li		I, 30c
-029a	draw	V0, V7, 1
-029c	li		V0, fe
-029e	xor		V9, V0
-02a0	jal		2f6
-02a2	add		V5, V5, 01
-02a4	jal		2f6
-02a6	skip_ne	V5, 60
-02a8	j		2de
-02aa	j		246
+0270	skip_ne	V6, 00      ;se pallina tocca il bordo a sx:
+0272	li		V8, 01      ;inverti la sua velocità laterale (che, per toccare il bordo sx, deve essere per forza ff)
+0274	skip_ne	V6, 3f      ;se pallina tocca bordo dx
+0276	li		V8, ff      ;inverti velocità laterale (v.272)
+0278	skip_ne	V7, 00      ;se pallina tocca soffitto
+027a	li		V9, 01      ;inverti senso di marcia verso il giù
+027c	draw	V6, V7, 1   ;disegna la pallina nella nuova locazione
+027e	skip_eq	VF, 01      ;se la pallina non tocca nulla:
+0280	j		2aa         ;salta a 2aa (ricomincia il ciclo dal movimento della racchetta)
+0282	skip_ne	V7, 1f      ;se la pallina tocca qualcosa E si trova nell'ultima riga (= tocca la racchetta)
+0284	j		2aa         ;va a 2aa (j spostaRacchetta(), v.280)
+0286	li		V0, 05      ;se la pallina tocca un blocchetto, metti 5 in v0
+0288	sub_curry	V0, V0, V7  ;v0 = v0 - y.pallina; VF = 0 se y.pallina > 5
+028a	skip_eq	VF, 00      ;se y.pallina < 5: (??? che cosa dovrebbe trovare come ostacolo???)
+028c	j		2aa         ;va a 2aa (j spostaRacchetta(), v.280)
+028e	li		V0, 01      ;se altrimenti y.pallina nei luoghi dove ci sono i blocchetti, v0=1
+0290	mv		ST, V0      ;st=01 (aka. suona il beep (quasi) subito?)
+0292	mv		V0, V6      ;v0 = x.pallina
+0294	li		V1, fc      ;v1 = fc = 1111 1100 (NON CAPISCO PERCHE)
+0296	and		V0, V1      ;v0 = 1111 1100 && x.pallina (FORSE PER TROVARE IL PUNTO DI ORIGINE DEL BLOCCHETTO PER POTERLO CANCELLARE TUTTO?)
+0298	li		I, 30c      ;spirito blocchetto
+029a	draw	V0, V7, 1   ;cancella(?) il blocchetto 
+029c	li		V0, fe      ;fe = 1111 1110
+029e	xor		V9, V0      ;xor 1111 1110, velocità verticale pallina (che è o 1 o -1=ff) (-> v9 è o 0000 0001 o 1111 1111 (ff))
+02a0	jal		2f6         ;CANCELLA il punteggio ormai vecchio (hai colpito un blocchettino!) 
+02a2	add		V5, V5, 01  ;aggiungi uno al punteggio
+02a4	jal		2f6         ;DISEGNA il punteggio aggiornato
+02a6	skip_ne	V5, 60      ;se ho rotto tutti i blocchettini
+02a8	j		2de         ;fine
+02aa	j		246         ;va alla procedura spostaRacchetta()
 
 pallinaInFondo:
 02ac	li		V9, ff
@@ -121,7 +121,10 @@ pallinaInFondo:
 02d8	draw	V0, V1, 1
 02da	skip_eq	VE, 00
 02dc	j		230
-02de	j		2de
+
+end:
+    02de	j		2de
+    
 02e0	add		V8, V8, ff
 02e2	skip_ne	V8, fe
 02e4	li		V8, ff
