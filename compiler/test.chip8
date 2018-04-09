@@ -8,6 +8,8 @@ start:
     li v0, 5    ;commento: considerarlo sempre in hex?
     li V1, 0x05
     li v2, 0b101
+    skip_eq v4, 14
+    skip_eq VF, 0
     li dt, 50
     mv v2, v3
     
