@@ -25,7 +25,27 @@ Chip8 initChip8(char* filename) {
     fseek(source, 0L, SEEK_END);
     int size = ftell(source);
     rewind(source);
-
+    
+    unsigned char charset[5*16] =
+        {0xf0,0x90,0x90,0x90,0xf0,
+         0x20,0x60,0x20,0x20,0x70,
+         0xf0,0x10,0xf0,0x80,0xf0,
+         0xf0,0x10,0xf0,0x10,0xf0,
+         0x90,0x90,0xf0,0x10,0x10,
+         0xf0,0x80,0xf0,0x10,0xf0,
+         0xf0,0x80,0xf0,0x90,0xf0,
+         0xf0,0x10,0x20,0x40,0x40,
+         0xf0,0x90,0xf0,0x90,0xf0,
+         0xf0,0x90,0xf0,0x10,0xf0,
+         0xf0,0x90,0xf0,0x90,0x90,
+         0xe0,0x90,0xe0,0x90,0xe0,
+         0xf0,0x80,0x80,0x80,0xf0,
+         0xe0,0x90,0x90,0x90,0xe0,
+         0xf0,0x80,0xf0,0x80,0xf0,
+         0xf0,0x80,0xf0,0x80,0x80};
+    for (int i=0; i<5*16; i++)
+        chip8->memory[i] = charset[i];
+        
     for (int i=0; i<size; i += 2) {
         unsigned char b1 = fgetc(source), b2 = fgetc(source);
         chip8->memory[512 + i]     = b1;
@@ -74,7 +94,7 @@ void machinedump(Chip8 chip8, unsigned char regNum) {
 
 void disassemble(Chip8 chip8) {
     FILE* asmout = fopen("asm.asm", "w");
-    for (unsigned short i=0; i<4096; i+=2) {
+    for (unsigned short i=512; i<4096; i+=2) {
         chip8->pc = i;
         if (chip8->memory[chip8->pc] == 0 && chip8->memory[chip8->pc+1] == 0) continue;
         execute(chip8, 0, asmout);
@@ -347,8 +367,9 @@ int execute(Chip8 chip8, int debug, FILE* asmf) {
                     break;
                 
                 case 0x29:
-                    if (debug) { printf("DIOCANE\n"); }
-                    if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "non implementata\n", b2); break; }            //TODO
+                    if (debug) { printf("[LOADCHAR]\n"); }
+                    if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "load_charset V%02X\n", b2); break; }
+                    chip8->I = chip8->registers[b2]*5;
                     break;
                      
                 case 0x1E:

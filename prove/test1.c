@@ -2,14 +2,16 @@
 #include <stdio.h>
 
 int main() {
-    unsigned char a = 0x00,
-                  b = 0xEE;
-                  
-    unsigned char   b1 = (a & 0xF0) >> 4,
-                        b2 = a & 0xF,
-                        b3 = (b & 0xF0) >> 4,
-                        b4 = b & 0xF;
+    unsigned char a = 0x40;
+    unsigned char c,d,u;
     
-    printf("%02x%02x\n", a, b);
-    printf("%x%x%x%x\n", b1,b2,b3,b4);
+    c = 100 * ((int)a / 100);
+    d = 10  * (((int)a - c) / 10);
+    u = a - c - d;
+    d = (unsigned char)(d / 10);
+    c = (unsigned char)(c / 100);
+    
+    printf("%d\n", a);
+    printf("%d, %d, %d", c, d, u);
+    
 }
