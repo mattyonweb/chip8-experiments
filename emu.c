@@ -431,17 +431,19 @@ void draw(Chip8 chip8, unsigned char x, unsigned char y, unsigned char n) {
         char bits = chip8->memory[chip8->I + i];    //riga nesima dello spirito
         if (DEBUG) printf("\t\t\t\t");
 
-        for (int b=0; b<8; b++) {
+        for (int b=0; b<8; b++) {   //ogni char della riga
             unsigned char newVal = bits >> (7 - b) & 0x01;
             if (chip8->monitor[pos] == 1 && newVal == 1) {
                 chip8->registers[0xF] = 1;
                 hasFlipped = 1;
             }
+            
+            if (pos > 64*32 - 1)
+                pos -= 64;
+                
             chip8->monitor[pos] ^= newVal;
             
             if (!DEBUG) { //disegna
-                if (pos > 64*32)
-                    pos -= 64;
                 if (chip8->monitor[pos] == 0) 
                     mvprintw(pos / 64, pos % 64, " ");
                 else

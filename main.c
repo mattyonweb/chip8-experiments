@@ -7,10 +7,9 @@
 void prompt(Chip8 chip8);
 
 int main() {
-    Chip8 chip8 = initChip8("TETRIS");
+    Chip8 chip8 = initChip8("BRIX");
 
     disassemble(chip8);
-    //~ exit(0);
 
     if (DEBUG) 
         memdump(chip8);
