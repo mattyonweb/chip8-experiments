@@ -11,6 +11,8 @@ def read_source(filename):
     return src_lines
     
 def return_sections(stripped_lines):
+    """ Ritorna due liste in cui sono presenti, rispettivamente, le 
+    linee sui dati e le linee di codice. """
     try:
         idx_data = stripped_lines.index(".data:")
     except:
@@ -38,35 +40,39 @@ for l in code:
     translated = trans.translate_line(l)
     out.append(translated)
 
-first_idx_free = 512 + 2 * len(list(filter(lambda l: ":" not in l, out)))
-print(out)
-print(len(out))
-print("{:03X}".format(first_idx_free))
-
-spiriti_table = {}
-spiriti_value = []
-for s in data:
-    name, values = s.replace(": ", " : ").replace(" ", "").split(":")
-    bytes_str    = values.replace(", ", ",").split(",")
-    bytes_       = list(map(lambda b: "{:02X}".format(int(b,16)), bytes_str))
+def return_spirit_table(lines):
+    """ Ritorna dizionario nomeSpirito : str(idx) (già base 16) """
+    spiriti_table  = {}
+    spiriti_values = []
     
-    spiriti_table[name] = "{:03X}".format(int(str(first_idx_free)))
-    first_idx_free     += len(bytes_)
-    spiriti_value      += bytes_ 
+    first_idx_free = 512 + 2 * len(list(filter(lambda l: ":" not in l, out)))
+    
+    for spirit in data:
+        name, values = spirit.replace(": ", " : ").replace(" ", "").split(":")
+        bytes_str    = values.replace(", ", ",").split(",")
+        bytes_       = list(map(lambda b: "{:02X}".format(int(b,16)), bytes_str))
+        
+        spiriti_table[name] = "{:03X}".format(int(str(first_idx_free)))
+        first_idx_free     += len(bytes_)
+        spiriti_values     += bytes_
+    
+    spiriti_values = list(map(lambda b: int(b, 16), spiriti_values))
+    return (spiriti_table, spiriti_values)
     
 
-code_translated = lk.linker(out, spiriti_table)
+spirit_table, spirit_values = return_spirit_table(out)
+code_translated = lk.linker(out, spirit_table)
 
-bytes_ = []
-for i in range(0, len(code_translated)):
-    bytes_.append(code_translated[i][:2])
-    bytes_.append(code_translated[i][2:4])
-print(spiriti_value)
-print(bytes_ + spiriti_value)
+def chunk_code(two_bytes_codes):
+    bytes_ = []
+    for i in range(0, len(code_translated)):
+        bytes_.append(two_bytes_codes[i][:2])
+        bytes_.append(two_bytes_codes[i][2:4])
+    return list(map(lambda b: int(b, 16), bytes_))
+    
+bytecode = chunk_code(code_translated)
 
-ints = map(lambda b: int(b, 16), bytes_ + spiriti_value)
-output = bytearray(ints)
+output = bytearray(bytecode + spirit_values)
 with open("../roms/MYMAZE", "wb") as f:
     f.write(output)
-# ~ print("\n".join(out))
             
