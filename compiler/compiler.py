@@ -57,9 +57,17 @@ def chunk_code(two_bytes_codes):
         bytes_.append(two_bytes_codes[i][:2])
         bytes_.append(two_bytes_codes[i][2:4])
     return list(map(lambda b: int(b, 16), bytes_))
-    
 
-src_lines = read_source("maze.chip8")
+########################################################################
+    
+import sys
+
+try:
+    src_lines = read_source(sys.argv[1])
+except IndexError:
+    print("Nessun file in input: default file")
+    src_lines = read_source("maze.chip8")
+    
 data, code = return_sections(src_lines)
 
 intermediate_trans = [trans.translate_line(l) for l in code]

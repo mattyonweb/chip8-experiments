@@ -14,8 +14,7 @@ def return_table(lines, spirits_table):
 def replacer(lines, table):
     text = "\n".join(lines)
     
-    for lbl, idx in table.items():
-        print(lbl, idx)
+    for lbl, idx in table.items():  
         text = text.replace(lbl + ":\n", "")
         text = text.replace(lbl, idx)
     
