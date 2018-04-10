@@ -20,13 +20,7 @@ Chip8 initChip8(char* filename) {
      * programma in memoria */
     Chip8 chip8 = malloc(sizeof(struct machine));
     
-    FILE * source = fopen(filename, "rb");
-
-    fseek(source, 0L, SEEK_END);
-    int size = ftell(source);
-    rewind(source);
-    
-    unsigned char charset[5*16] =
+    unsigned char charset[5*16] =   //lettere codificate in bits
         {0xf0,0x90,0x90,0x90,0xf0,
          0x20,0x60,0x20,0x20,0x70,
          0xf0,0x10,0xf0,0x80,0xf0,
@@ -46,6 +40,12 @@ Chip8 initChip8(char* filename) {
     for (int i=0; i<5*16; i++)
         chip8->memory[i] = charset[i];
         
+    FILE * source = fopen(filename, "rb");
+
+    fseek(source, 0L, SEEK_END);
+    int size = ftell(source);
+    rewind(source);
+        
     for (int i=0; i<size; i += 2) {
         unsigned char b1 = fgetc(source), b2 = fgetc(source);
         chip8->memory[512 + i]     = b1;
@@ -61,7 +61,7 @@ Chip8 initChip8(char* filename) {
     
 void memdump(Chip8 chip8) {
     /* Salva su file il dump della memoria */
-    FILE* fout = fopen("memdump", "w");
+    FILE* fout = fopen("out/memdump", "w");
     
     for (int i=0; i<4096; i+=2)
         fprintf(fout, "%03X\t%04X\n", i, (chip8->memory[i] << 8) | chip8->memory[i+1]);
@@ -70,7 +70,7 @@ void memdump(Chip8 chip8) {
 
 void monitordump(Chip8 chip8) {
     /* Salva su file il dump del monitor */
-    FILE * fout = fopen("mondump", "w");
+    FILE * fout = fopen("out/mondump", "w");
     for (int i=0; i<32*64; i++) {
         fprintf(fout, "%d", chip8->monitor[i]);
         if (i % 64 == 0)
@@ -93,7 +93,7 @@ void machinedump(Chip8 chip8, unsigned char regNum) {
 }
 
 void disassemble(Chip8 chip8) {
-    FILE* asmout = fopen("asm.asm", "w");
+    FILE* asmout = fopen("out/dis.asm", "w");
     for (unsigned short i=512; i<4096; i+=2) {
         chip8->pc = i;
         if (chip8->memory[chip8->pc] == 0 && chip8->memory[chip8->pc+1] == 0) continue;

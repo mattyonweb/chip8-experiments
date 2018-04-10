@@ -4,10 +4,10 @@
 0206	li		VA, 00
 0208	li		I, 30c
 020a	draw	VA, VB, 1
-020c	add		VA, 0a
+020c	add		VA, VA, 04
 020e	skip_eq	VA, 40
 0210	j		208
-0212	add		VB, 0b
+0212	add		VB, VB, 02
 0214	skip_eq	VB, 12
 0216	j		206
 0218	li		VC, 20
@@ -19,7 +19,7 @@
 0224	li		V1, 00
 0226	li		I, 312
 0228	draw	V0, V1, 1
-022a	add		V0, 00
+022a	add		V0, V0, 08
 022c	li		I, 30e
 022e	draw	V0, V1, 1
 0230	li		V0, 40
@@ -37,17 +37,17 @@
 0248	draw	VC, VD, 1
 024a	li		V0, 04
 024c	keyne	V0
-024e	add		VC, 0c
+024e	add		VC, VC, fe
 0250	li		V0, 06
 0252	keyne	V0
-0254	add		VC, 0c
+0254	add		VC, VC, 02
 0256	li		V0, 3f
 0258	and		VC, V0
 025a	draw	VC, VD, 1
 025c	li		I, 30e
 025e	draw	V6, V7, 1
-0260	add		V6, V6
-0262	add		V7, V7
+0260	add_curry	V6, V6, V8
+0262	add_curry	V7, V7, V9
 0264	li		V0, 3f
 0266	and		V6, V0
 0268	li		V1, 1f
@@ -79,7 +79,7 @@
 029c	li		V0, fe
 029e	xor		V9, V0
 02a0	jal		2f6
-02a2	add		V5, 05
+02a2	add		V5, V5, 01
 02a4	jal		2f6
 02a6	skip_ne	V5, 60
 02a8	j		2de
@@ -102,19 +102,19 @@
 02ca	li		V0, 20
 02cc	mv		ST, V0
 02ce	li		I, 30e
-02d0	add		VE, 0e
+02d0	add		VE, VE, ff
 02d2	mv		V0, VE
-02d4	add		V0, V0
+02d4	add_curry	V0, V0, V0
 02d6	li		V1, 00
 02d8	draw	V0, V1, 1
 02da	skip_eq	VE, 00
 02dc	j		230
 02de	j		2de
-02e0	add		V8, 08
+02e0	add		V8, V8, ff
 02e2	skip_ne	V8, fe
 02e4	li		V8, ff
 02e6	j		2ee
-02e8	add		V8, 08
+02e8	add		V8, V8, 01
 02ea	skip_ne	V8, 02
 02ec	li		V8, 01
 02ee	li		V0, 04
@@ -128,7 +128,7 @@
 02fe	li		V3, 37
 0300	li		V4, 00
 0302	draw	V3, V4, 5
-0304	add		V3, 03
+0304	add		V3, V3, 05
 0306	load_charset V02
 0308	draw	V3, V4, 5
 030a	ret
