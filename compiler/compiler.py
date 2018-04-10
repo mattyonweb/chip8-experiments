@@ -32,6 +32,7 @@ data, code = return_sections(src_lines)
 out = list()
 
 def tokenize_line(line):
+    """ Tokeniza una riga di codice """
     in_tokens = line.replace(", ", " ").replace(",", " ").split()
     out_tokens = [ in_tokens[0] ]
     
@@ -54,19 +55,18 @@ def tokenize_line(line):
     return out_tokens
 
 def translate_tokens(opcode, args):
-    if len(args) == 1:
-        if args[0][0].upper() == "V":
-            return [args[0][1].upper()]
-        else:
-            return args[0]
-    else:
-        f = lambda x: x[1].upper() if x[0].upper() == "V" else x
-        return opcode.format(*map(f, args))   
+    """ Un map() che traduce i registri nei rispettivi codici hex e 
+    lascia intatto tutto il resto. """
+    f = lambda x: x[1].upper() if x[0].upper() == "V" else x
+    return opcode.format(*map(f, args))   
         
 
 def intermediate_translation(tokens):
-    out_ = str()
-    
+    """ Dati i tokens di una riga, ritorna una stringa che è la 
+    rappresentazione intermedia del codice, aka: le label per i jump 
+    rimangono intatte (in realtà tutte le label rimangono intatte) tutto
+    il resto viene tradotto. """
+  
     if ":" in tokens[0]:
         return tokens[0]
         
@@ -74,24 +74,23 @@ def intermediate_translation(tokens):
         print(tokens)
         raise LookupError("NON SI TROVA QUESTA FACCIA DA CULO")
         
-    translation = opc.opcodes[tokens[0]]
+    translation = opc.opcodes[tokens[0]] #eg. "4{}{}5", ("1{}", "8{}{}")
     
     if tokens[0] == "skip_eq" or tokens[0] == "skip_ne":
         if tokens[1] in opc.registers and not (tokens[2] in opc.registers):
-            out_ = translation[0].format(tokens[1][1], tokens[2])
+            return translation[0].format(tokens[1][1], tokens[2])
         elif tokens[1] in opc.registers and tokens[2] in opc.registers:
-            out_ = translation[1].format(tokens[1][1], tokens[2][1])
+            return translation[1].format(tokens[1][1], tokens[2][1])
         else:
             raise LookupError("SKIP_EQ - Unknown format: " + l)
             
     elif tokens[0] not in "li,add,mv,sub_curry".split(","):
-        out_ = "".join(translate_tokens(translation, tokens[1:]))
-    
-    return out_
+        return "".join(translate_tokens(translation, tokens[1:]))
     
 def translate_line(line):
     tokens = tokenize_line(line)
     return intermediate_translation(tokens)
+    
 # ~ out = list()
 # ~ for l in code:
     # ~ tokens = tokenize_line(l)
@@ -101,6 +100,7 @@ def translate_line(line):
 # ~ print("\n".join(out))
             
 ########################################## TESTS #######################
+### TEST1 - Vediamo se tokenizza bene 
 a = "li v0, 5"
 assert(tokenize_line(a) == ["li", "V0", "05"])
 a = "j label2"
@@ -112,11 +112,12 @@ assert(tokenize_line(a) == ["multiload", "0-5"])
 a = "start:"
 assert(tokenize_line(a) == ["start:"])
 
+### TEST2 - Vediamo se traduce bene le traduzioni univoche
 a = "xor v0,v1"
 assert(translate_line(a) == "8013")
 a = "rand vF, 3"
 assert(translate_line(a) == "CF03")
-a = "key_eq VF, 9"
+a = "key_eq vf"
 assert(translate_line(a) == "EF9E")
 a = "clear"
 assert(translate_line(a) == "00E0")
