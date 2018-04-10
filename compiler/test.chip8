@@ -6,11 +6,8 @@
 
 start:
     li v0, 5    ;commento: considerarlo sempre in hex?
-    li V1, 0x05
-    li v2, 0b101
     skip_eq v4, 14
     skip_eq VF, 0
-    li dt, 50
     mv v2, v3
     
     nested:
@@ -24,7 +21,7 @@ start:
     li v8, 1
     j start
     rand v4, 55
-    xor v0, 22
+    xor v0, v1
     
 
 end:

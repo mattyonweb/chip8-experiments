@@ -65,10 +65,29 @@ def intermediate_translation(tokens):
         if args[0] == "I":
             return translation[1].format(*translate_registers(args[1:]))
         if args[1] in opc.registers:
-            # ~ print("LOL")
             return translation[2].format(*translate_registers(args))
-        # ~ print("ASD")
         return translation[0].format(*translate_registers(args))
+    
+    elif inst == "mv":
+        if args[0].upper() == "DT":
+            return translation[2].format(*translate_registers(args[1:]))
+        if args[0].upper() == "ST":
+            return translation[3].format(*translate_registers(args[1:]))
+        if args[1].upper() == "DT":
+            return translation[1].format(*translate_registers(args[:1]))
+        return translation[0].format(*translate_registers(args))
+    
+    elif inst == "sub_curry":
+        if args[0] == args[1]:
+            return translation[0].format(*translate_registers(args[1:]))
+        else:
+            return translation[1].format(*translate_registers(args[:2]))
+    
+    elif inst == "multistore":
+        return translation.format(args[0].split("-")[1].upper())
+    elif inst == "multiload":
+        return translation.format(args[0].split("-")[1].upper())
+    
             
     elif inst not in "li,add,mv,sub_curry".split(","):
         args = args
@@ -106,8 +125,6 @@ a = "key_eq vf"
 assert(translate_line(a) == "EF9E")
 a = "clear"
 assert(translate_line(a) == "00E0")
-a = "add_curry vf, ve"
-assert(translate_line(a) == "8FE4")
 a = "bcd v1"
 assert(translate_line(a) == "F133")
 
@@ -134,4 +151,27 @@ assert(translate_line(a) == "F41E")
 a = "add I,vf"
 assert(translate_line(a) == "FF1E")
 
-### ADD
+### MV
+a = "mv v0, vf"
+assert(translate_line(a) == "80F0")
+a = "mv v0, dt"
+assert(translate_line(a) == "F007")
+a = "mv dt, v0"
+assert(translate_line(a) == "F015")
+a = "mv st, v0"
+assert(translate_line(a) == "F018")
+a = "add I,vf"
+
+## SUB_CURRY
+a = "sub_curry v0, v0, vf"
+assert(translate_line(a) == "80F5")
+a = "sub_curry v0, vf, v0"
+assert(translate_line(a) == "80F7")
+a = "sub_curry v0, v5, vf"  #AATTENZIONE!! SEMANTICAMENTE SCORRETTO MA COMPILA!
+assert(translate_line(a) == "8057")
+
+### MULTI
+a = "multistore 0-f"
+assert(translate_line(a) == "FF55")
+a = "multiload 0-f"
+assert(translate_line(a) == "FF65")

@@ -33,11 +33,11 @@ def return_sections(stripped_lines):
 data, code = return_sections(src_lines)
 out = list()
     
-# ~ out = list()
-# ~ for l in code:
-    # ~ tokens = tokenize_line(l)
-    # ~ trans = intermediate_translation(tokens)
-    # ~ out.append(trans) if trans != "" else None
+out = list()
+for l in code:
+    translated = trans.translate_line(l)
+    out.append(translated) if translated != "" else None
+    print(translated )
     
-print("\n".join(out))
+# ~ print("\n".join(out))
             
