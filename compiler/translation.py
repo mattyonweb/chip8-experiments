@@ -41,7 +41,7 @@ def intermediate_translation(tokens):
         return inst
         
     if inst not in opc.opcodes:
-        print(tokens)
+        print(inst, tokens)
         raise LookupError("NON SI TROVA QUESTA FACCIA DA CULO")
         
     translation = opc.opcodes[inst] #eg. "4{}{}5", ("1{}", "8{}{}")
@@ -56,7 +56,10 @@ def intermediate_translation(tokens):
             
     elif inst == "li":
         if args[0] == "I":
-            address = "{:03X}".format(int(args[1], 16))
+            try:
+                address = "{:03X}".format(int(args[1], 16))
+            except ValueError:
+                address = args[1]
             return translation[1].format(address)
         else:
             return translation[0].format(*translate_registers(args))
@@ -88,8 +91,10 @@ def intermediate_translation(tokens):
     elif inst == "multiload":
         return translation.format(args[0].split("-")[1].upper())
     
-            
-    elif inst not in "li,add,mv,sub_curry".split(","):
+    elif inst == "draw":
+        return translation.format(args[0][1].upper(), args[1][1].upper(), args[2][1].upper())
+        
+    else:
         args = args
         return translation.format(*translate_registers(args))  
     
@@ -127,6 +132,8 @@ a = "clear"
 assert(translate_line(a) == "00E0")
 a = "bcd v1"
 assert(translate_line(a) == "F133")
+a = "draw v0, v1, 5"
+assert(translate_line(a) == "D015")
 
 ### TEST4 - Ora quelli multi univochi
 ### LI

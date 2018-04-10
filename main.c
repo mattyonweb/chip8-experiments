@@ -7,7 +7,7 @@
 void prompt(Chip8 chip8);
 
 int main() {
-    Chip8 chip8 = initChip8("roms/TETRIS");
+    Chip8 chip8 = initChip8("roms/MYMAZE");
 
     disassemble(chip8);
 

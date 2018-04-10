@@ -1,0 +1,37 @@
+.data:
+    sxdx: 80, 40, 20, 10, 8, 4, 2, 1    
+    dxsx: 1, 2, 4, 8, 10, 20, 40, 80
+
+.code:
+
+start:
+    li      v0, 0
+    li      v1, 0
+    
+loop:
+    rand    v2, 1
+    skip_eq v2, 1
+    j       drawSxdx
+    j       drawDxsx
+
+afterDraw:
+    add     v0, 8
+    skip_eq v0, 40
+    j loop
+    li      v0, 0
+    add     v1, 8
+    skip_eq v1, 20
+    j loop
+    
+end:
+    j end
+    
+drawSxdx:
+    li      I, sxdx
+    draw    v0, v1, 8
+    j afterDraw
+    
+drawDxsx:
+    li      I, dxsx
+    draw    v0, v1, 8
+    j afterDraw
