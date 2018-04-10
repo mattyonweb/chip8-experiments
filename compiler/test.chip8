@@ -20,8 +20,12 @@ start:
         add v0, v0, v1
     
     skip_ne v8, fe
+    skip_ne v8, v8
     li v8, 1
     j start
+    rand v4, 55
+    xor v0, 22
+    
 
 end:
     j end

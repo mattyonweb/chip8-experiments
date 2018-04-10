@@ -52,40 +52,71 @@ def tokenize_line(line):
                 out_tokens.append(t)
                  
     return out_tokens
-            
-            
-for l in code:
-    tokens = tokenize_line(l)
+
+def translate_tokens(opcode, args):
+    if len(args) == 1:
+        if args[0][0].upper() == "V":
+            return [args[0][1].upper()]
+        else:
+            return args[0]
+    else:
+        f = lambda x: x[1].upper() if x[0].upper() == "V" else x
+        return opcode.format(*map(f, args))   
+        
+
+def intermediate_translation(tokens):
+    out_ = str()
     
     if ":" in tokens[0]:
-        out.append(l)
-        continue
+        return tokens[0]
         
     if tokens[0] not in opc.opcodes:
-        print(tokens[0])
+        print(tokens)
         raise LookupError("NON SI TROVA QUESTA FACCIA DA CULO")
         
     translation = opc.opcodes[tokens[0]]
     
-    if tokens[0] == "skip_eq":
+    if tokens[0] == "skip_eq" or tokens[0] == "skip_ne":
         if tokens[1] in opc.registers and not (tokens[2] in opc.registers):
-            out.append(translation[0].format(tokens[1][1], tokens[2]))
+            out_ = translation[0].format(tokens[1][1], tokens[2])
         elif tokens[1] in opc.registers and tokens[2] in opc.registers:
-            out.append(translation[0].format(tokens[1][1], tokens[2][1]))
+            out_ = translation[1].format(tokens[1][1], tokens[2][1])
         else:
             raise LookupError("SKIP_EQ - Unknown format: " + l)
-
-print("\n".join(out))
+            
+    elif tokens[0] not in "li,add,mv,sub_curry".split(","):
+        out_ = "".join(translate_tokens(translation, tokens[1:]))
+    
+    return out_
+    
+def translate_line(line):
+    tokens = tokenize_line(line)
+    return intermediate_translation(tokens)
+# ~ out = list()
+# ~ for l in code:
+    # ~ tokens = tokenize_line(l)
+    # ~ trans = intermediate_translation(tokens)
+    # ~ out.append(trans) if trans != "" else None
+    
+# ~ print("\n".join(out))
             
 ########################################## TESTS #######################
 a = "li v0, 5"
 assert(tokenize_line(a) == ["li", "V0", "05"])
-
 a = "j label2"
 assert(tokenize_line(a) == ["j", "label2"])
-
 a = "mv v0, Vf"
 assert(tokenize_line(a) == ["mv", "V0", "VF"])
-
 a = "multiload 0-5"
 assert(tokenize_line(a) == ["multiload", "0-5"])
+a = "start:"
+assert(tokenize_line(a) == ["start:"])
+
+a = "xor v0,v1"
+assert(translate_line(a) == "8013")
+a = "rand vF, 3"
+assert(translate_line(a) == "CF03")
+a = "key_eq VF, 9"
+assert(translate_line(a) == "EF9E")
+a = "clear"
+assert(translate_line(a) == "00E0")
