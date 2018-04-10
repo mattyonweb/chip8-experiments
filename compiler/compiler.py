@@ -1,5 +1,6 @@
 import opcodes as opc
 import translation as trans
+import linker as lk
 
 with open("test.chip8", "r") as f:
     raw_lines = map(str.strip, f.readlines())
@@ -31,13 +32,12 @@ def return_sections(stripped_lines):
    
     
 data, code = return_sections(src_lines)
-out = list()
     
 out = list()
 for l in code:
     translated = trans.translate_line(l)
     out.append(translated) if translated != "" else None
-    print(translated )
     
+print(lk.linker(out))
 # ~ print("\n".join(out))
             

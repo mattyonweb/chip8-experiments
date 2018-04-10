@@ -10,12 +10,13 @@ start:
     skip_eq VF, 0
     mv v2, v3
     
-    nested:
-        bcd v2
-        load_charset v1
-        multiload 0-4
-        add v0, v0, v1
+nested:
+    bcd v2
+    load_charset v1
+    multiload 0-4
+    add v0, v0, v1
     
+other:
     skip_ne v8, fe
     skip_ne v8, v8
     li v8, 1
