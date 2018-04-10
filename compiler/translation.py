@@ -95,7 +95,6 @@ def intermediate_translation(tokens):
         return translation.format(args[0][1].upper(), args[1][1].upper(), args[2][1].upper())
         
     else:
-        args = args
         return translation.format(*translate_registers(args))  
     
 def translate_line(line):

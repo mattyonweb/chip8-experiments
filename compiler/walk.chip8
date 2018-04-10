@@ -1,0 +1,32 @@
+.data:
+    you: 80
+
+.code:
+
+start:
+    li      v0, 20
+    li      v1, 10
+    li      v5, 1f
+    li      v6, 3f
+    li      I, you
+    draw    v0, v1, 1
+    
+loop:
+    waitkey v2
+    
+    draw    v0, v1, 1
+    
+    skip_ne v2, 8
+    add     v1, ff
+    skip_ne v2, 2
+    add     v1, 1
+    and     v1, v5
+    
+    skip_ne v2, 4
+    add     v0, ff
+    skip_ne v2, 6
+    add     v0, 1
+    and     v0, v6
+    
+    draw    v0, v1, 1
+    j loop

@@ -6,14 +6,19 @@
 
 void prompt(Chip8 chip8);
 
-int main() {
-    Chip8 chip8 = initChip8("roms/MYMAZE");
+int main(int argn, char** args) {
+    Chip8 chip8;
+    
+    if (argn == 2)
+        chip8 = initChip8(args[1]);
+    else 
+        chip8 = initChip8("roms/MYMAZE"); 
 
     disassemble(chip8);
 
     if (DEBUG) 
         memdump(chip8);
-    if (!DEBUG)
+    else
         createWindow();
     
     while (1) {

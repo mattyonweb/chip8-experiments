@@ -24,8 +24,3 @@ def linker(lines, spirits_table={}):
     """ Ritorna una lista """
     table = return_table(lines, spirits_table)
     return replacer(lines, table)
-
-########################################################################
-###
-# ~ a = ["start:", "li v0,5", "j start", "end:", "j end"]
-# ~ assert(linker(a) == ["li v0,5", "
