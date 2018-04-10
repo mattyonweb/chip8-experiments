@@ -208,7 +208,7 @@ int execute(Chip8 chip8, int debug, FILE* asmf) {
             
         case 7:
             if (debug) { printf("[ADD_EQ]\t");}
-            if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "add\t\tV%X, V%X, %02x\n", b2, b2, lastTwo); break; }
+            if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "add\t\tV%X, %02x\n", b2, b2, lastTwo); break; }
             chip8->registers[b2] += lastTwo;
             if (debug) { printf("V%X += 0x%x\n", b2, lastTwo);}
             break;
@@ -241,7 +241,7 @@ int execute(Chip8 chip8, int debug, FILE* asmf) {
 
                 case 4:
                     if (debug) { printf("[ADD_C]\tV%X += V%X (c)\n", b2, b3);}
-                    if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "add_curry\tV%X, V%X, V%X\n", b2, b2, b3); break; }
+                    if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "add\t\tV%X, V%X\n", b2, b2, b3); break; }
                     if (chip8->registers[b2] + chip8->registers[b3] > 255)
                         chip8->registers[0xF] = 1;
                     else 
@@ -304,7 +304,8 @@ int execute(Chip8 chip8, int debug, FILE* asmf) {
 
         case 0xB:
             if (debug) { printf("[JUMP]\tPC = %03x\n", instruction & 0x0fff);}
-            if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "add\t\tPC, PC, V0\naddi\tPC, PC, %x\n", instruction & 0x0fff); break; }
+            //~ if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "add\t\tPC, PC, V0\naddi\tPC, PC, %x\n", instruction & 0x0fff); break; }
+            if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "joff\t%x\n", instruction & 0x0fff); break; }
             chip8->pc = chip8->registers[0] + (instruction & 0x0fff);
             updatePc = 0;
             break;
@@ -326,7 +327,7 @@ int execute(Chip8 chip8, int debug, FILE* asmf) {
             if (b3 == 9 && b4 == 0xE) {   
                 ch = getch();
                 if (debug) {printf("[KEYEQ]\tV%x=%x\t%x\n", b2, chip8->registers[b2], ch);}
-                if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "keyeq\tV%X\n", b2); break; }
+                if (asmf) { fprintf(asmf, "%04x	", chip8->pc);  fprintf(asmf, "key_eq\tV%X\n", b2); break; }
                 if (keyTranslate(ch) == chip8->registers[b2])
                     chip8->pc += 2;
                 break;

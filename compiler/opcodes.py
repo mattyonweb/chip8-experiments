@@ -5,11 +5,11 @@ opcodes = {
 "jal"       : "2{}",
 "skip_eq"   : ("3{}{}", "5{}{}0"),   #registro-imm | registro-registro
 "skip_ne"   : ("4{}{}", "9{}{}0"),   #registro-imm | registro-registro
-"li"        : ("6{}{}", "A{}"),     #li normale   | li I, val
-"add"       : ("7{}{}{}", "B{}",    #add normale  | add pc, pc, v0
-               "f{}1E"),            #add I, val
-"mv"        : ("8{}{}0", "F{}07",   #mv normale   | mv VX, dt
-               "F{}15",  "F{}18",), #mv dt, VX    | mv st, VX
+"li"        : ("6{}{}", "A{}"),      #li normale   | li I, val
+"add"       : ("7{}{}", "F{}1E",     #add r,val    | add I, val
+               "8{}{}4"),            #add r, r
+"mv"        : ("8{}{}0", "F{}07",    #mv normale   | mv VX, dt
+               "F{}15",  "F{}18",),  #mv dt, VX    | mv st, VX
 "or"        : "8{}{}1",
 "and"       : "8{}{}2",
 "xor"       : "8{}{}3",
