@@ -12,6 +12,10 @@ WINDOW * createWindow() {
     noecho();           //non mostra l'input da tastiera
     cbreak();           //boh?!
     curs_set(0);
+    
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+    attron(COLOR_PAIR(1));
     return w;
 }
 
@@ -466,10 +470,13 @@ void draw(Chip8 chip8, unsigned char x, unsigned char y, unsigned char n) {
             chip8->monitor[pos] ^= newVal;
             
             if (!DEBUG) { //disegna
-                if (chip8->monitor[pos] == 0) 
+                if (chip8->monitor[pos] == 0) {
                     mvprintw(pos / 64, pos % 64, " ");
-                else
-                    mvprintw(pos / 64, pos % 64, "#");
+                }
+                else {
+                    mvprintw(pos / 64, pos % 64, "");
+                    addch(' '  | A_REVERSE);
+                }
             } 
             else //outputta debug
                 printf("%d", newVal);

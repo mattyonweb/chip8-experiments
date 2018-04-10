@@ -1,7 +1,7 @@
 #ifndef EMU_H
 #define EMU_H
 
-#define CLOCK       3000
+#define CLOCK       2000
 #define INPUTTIME   25
 #define DEBUG       0
 
