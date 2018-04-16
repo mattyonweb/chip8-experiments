@@ -67,6 +67,7 @@ try:
 except IndexError:
     print("Nessun file in input: default file")
     src_lines = read_source("maze.chip8")
+
     
 data, code = return_sections(src_lines)
 
@@ -80,6 +81,12 @@ code_translated = lk.linker(intermediate_trans, spirit_table)
 bytecode = chunk_code(code_translated)
 
 output = bytearray(bytecode + spirit_values)
-with open("../roms/MYMAZE", "wb") as f:
+
+try:
+    out_filename = sys.argv[2]
+except IndexError:
+    print("Nessun file in output: default file")
+    out_filename = "out.asm"
+    
+with open(out_filename, "wb") as f:
     f.write(output)
-            
