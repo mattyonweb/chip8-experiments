@@ -13,9 +13,9 @@ Well, in theory - up to now I've tried to run the ROMs that you can find in the 
 1. In `BRIX` the user pad has to be redrawn constantly, also if it stays still; the result is an annoying flickering. I'm working on this.
 2. In `BRIX`, `TETRIS` and probably every other program that requires asynchronous input from the user, said input is often missed by the emulator. Again, quite annoying, but I'm working on it.
 
-Before running it, you must compile it with the following command (requires `ncurses`):
+To generate the binary, launch: (requires `ncurses`)
 
-	gcc emu.c main.c -lncurses -o main
+	make
     
 Then simply run `./main path/to/rom` and (hopefully) voilà! It's advisable to adjust the terminal windows size to 64x32 for the maximum pleasure experience. Sooner or later I'll make this step automatic, but until then... the manual way is preferred.
 

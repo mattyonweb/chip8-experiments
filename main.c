@@ -14,7 +14,7 @@ int main(int argn, char** args) {
     else 
         chip8 = initChip8("roms/MYMAZE"); 
 
-    disassemble(chip8);
+    // disassemble(chip8);
 
     if (DEBUG) 
         memdump(chip8);
@@ -27,7 +27,7 @@ int main(int argn, char** args) {
             prompt(chip8);
         if(chip8->dt > 0)
             chip8->dt--;
-        usleep(CLOCK);
+        //usleep(CLOCK);
     }
 }
 
